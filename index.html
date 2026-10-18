@@ -3,272 +3,281 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#e7f2fa">
+  <meta name="theme-color" content="#f6efe3">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Money Flow">
   <title>Money Flow｜輕鬆記帳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --ink:#1f2d3d;--sub:#5b6573;--faint:#9aa3ad;--line:#1f2d3d;--soft-line:#d8dee5;
-      --paper:#e7f2fa;--dot:#cfe4f3;--card:#fff;--fill:#f3f6f9;
-      --blue:#5fa9da;--blue-d:#2f7fb8;--blue-soft:#e3f1fb;
-      --yellow:#f5c85c;--yellow-d:#d9a320;--yellow-soft:#fdf3d6;
-      --coral:#e56b5b;--coral-d:#c94b3b;--coral-soft:#fce6e2;
-      --green:#4cc9a0;--purple:#a058d6;--pink:#e4476a;
-      --bw:2px;--shadow:3px 3px 0 var(--ink);--shadow-sm:2px 2px 0 var(--ink);
-      --r-lg:16px;--r-md:12px;--tab-h:62px;--safe-b:env(safe-area-inset-bottom,0px);
+      --ink:#4a3b2f;--sub:#7d6c5c;--faint:#b8a996;--rule:#eadfce;--grid:#efe6d8;
+      --paper:#f6efe3;--card:#fffdf8;--fill:#f4ece0;
+      --tea:#c8a27a;--tea-d:#9c7752;--tea-soft:#f3e6d4;
+      --olive:#6f8240;--olive-d:#55662e;--olive-soft:#e8edd6;
+      --terra:#c9654a;--terra-soft:#f8e3da;
+      --r-lg:18px;--r-md:12px;--tab-h:60px;--safe-b:env(safe-area-inset-bottom,0px);
+      --shadow:0 1px 0 rgba(74,59,47,.06),0 6px 18px rgba(120,90,60,.10);
+      --hand:"LXGW WenKai TC","Kaiti TC","STKaiti","PingFang TC",serif;
     }
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html{background:var(--paper)}
-    body{margin:0;color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang TC","Noto Sans TC","Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased;
-      background-color:var(--paper);background-image:radial-gradient(var(--dot) 1.3px,transparent 1.4px);background-size:14px 14px;min-height:100vh}
+    body{margin:0;color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased;
+      background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;min-height:100vh}
     button,input,select,textarea{font:inherit;color:inherit}
     button{cursor:pointer;border:0;background:none;padding:0}
     button:disabled{cursor:not-allowed;opacity:.45}
     .hidden{display:none!important}
     .num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+    h1,h2,.hand{font-family:var(--hand);font-weight:700}
 
-    /* ===== 共用元件：漫畫描邊 ===== */
-    .ink{border:var(--bw) solid var(--line);box-shadow:var(--shadow)}
-    .card{background:var(--card);border:var(--bw) solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:16px}
-    .press{transition:transform .08s,box-shadow .08s}
-    .press:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
-    .hl{background:linear-gradient(transparent 60%,var(--yellow) 60% 92%,transparent 92%);padding:0 2px}
-    .hl.blue{background:linear-gradient(transparent 60%,#9fd0f0 60% 92%,transparent 92%)}
+    /* ===== 共用 ===== */
+    .card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:16px;position:relative}
+    .hl{background:linear-gradient(transparent 62%,var(--tea-soft) 62%);padding:0 2px}
+    .hl.blue{background:linear-gradient(transparent 62%,var(--olive-soft) 62%)}
     .card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-    .card-head h2{font-size:16px;margin:0;font-weight:800}
-    .link{color:var(--blue-d);font-weight:700;font-size:14px;padding:10px 4px;margin:-10px -4px;min-height:40px}
+    .card-head h2{font-size:18px;margin:0}
+    .link{color:var(--olive-d);font-weight:700;font-size:14px;padding:10px 4px;margin:-10px -4px;min-height:40px}
     .muted{color:var(--sub);font-size:13px}
-    .empty{color:var(--sub);font-size:14px;padding:12px 0;text-align:center}
-    .btn{border:var(--bw) solid var(--line);border-radius:99px;box-shadow:var(--shadow-sm);padding:10px 16px;font-weight:800;min-height:44px;background:#fff}
-    .btn.yellow{background:var(--yellow)}.btn.blue{background:var(--blue);color:#fff}.btn.coral{background:var(--coral);color:#fff}.btn.white{background:#fff}
+    .empty{color:var(--sub);font-size:14px;padding:14px 0;text-align:center}
+    .btn{border:1.5px solid var(--rule);border-radius:12px;padding:10px 16px;font-weight:700;min-height:44px;background:var(--card);color:var(--ink)}
+    .btn:hover{background:var(--fill)}
+    .btn.primary{background:var(--olive);border-color:var(--olive);color:#fff}
+    .btn.primary:hover{background:var(--olive-d)}
+    .btn.accent{background:var(--tea-soft);border-color:var(--tea);color:#6d4f30}
     .btn.block{width:100%}
     .btn.sm{padding:7px 12px;min-height:38px;font-size:14px}
-    .btn:active:not(:disabled){transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
 
     /* ===== 外框 ===== */
-    .app{max-width:560px;margin:0 auto;padding:10px 16px calc(var(--tab-h) + 40px + var(--safe-b))}
-    .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0 14px}
-    .brand{font-size:20px;font-weight:900;letter-spacing:-.4px;display:flex;align-items:center;gap:6px}
-    .brand i{width:26px;height:26px;border-radius:8px;background:var(--yellow);border:var(--bw) solid var(--line);display:grid;place-items:center;font-style:normal;font-size:14px}
-    .month-nav{display:flex;align-items:center;gap:6px;background:#fff;border:var(--bw) solid var(--line);border-radius:99px;padding:3px;box-shadow:var(--shadow-sm)}
-    .month-nav button{width:32px;height:32px;border-radius:50%;font-size:14px;font-weight:900;color:var(--ink);display:grid;place-items:center}
+    .app{max-width:560px;margin:0 auto;padding:10px 16px calc(var(--tab-h) + 44px + var(--safe-b))}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0 14px}
+    .brand{font-family:var(--hand);font-size:24px;font-weight:700;display:flex;align-items:center;gap:8px}
+    .brand i{width:28px;height:28px;border-radius:50%;background:var(--olive);color:#fff;display:grid;place-items:center;font-style:normal;font-size:15px;font-family:-apple-system,sans-serif;font-weight:800}
+    .month-nav{display:flex;align-items:center;gap:2px;background:var(--card);border-radius:12px;padding:3px;box-shadow:var(--shadow)}
+    .month-nav button{width:34px;height:34px;border-radius:9px;font-size:11px;color:var(--sub);display:grid;place-items:center}
     .month-nav button:hover{background:var(--fill)}
-    .month-nav strong{min-width:96px;text-align:center;font-size:14px;font-weight:800}
+    .month-nav strong{min-width:98px;text-align:center;font-size:15px;font-family:var(--hand)}
     .page{display:grid;gap:14px}
 
     /* ===== 打卡 ===== */
     .streak-row{display:flex;align-items:center;gap:10px}
-    .streak-pill{display:flex;align-items:center;gap:4px;background:var(--yellow);border:var(--bw) solid var(--line);font-weight:900;font-size:14px;border-radius:99px;padding:5px 11px;white-space:nowrap}
-    .streak-row p{margin:0;flex:1;font-size:13.5px;color:var(--sub);min-width:0}
-    .backfill{margin-top:12px;background:var(--coral-soft);border:var(--bw) dashed var(--coral);border-radius:var(--r-md);padding:10px 12px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:14px;font-weight:600}
+    .streak-pill{display:flex;align-items:center;gap:4px;background:var(--tea-soft);color:#6d4f30;font-weight:800;font-size:14px;border-radius:10px;padding:6px 10px;white-space:nowrap;transform:rotate(-2deg)}
+    .streak-row p{margin:0;flex:1;font-size:14px;color:var(--sub);min-width:0;font-family:var(--hand)}
+    .backfill{margin-top:12px;background:var(--terra-soft);border-radius:var(--r-md);padding:10px 12px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:14px}
     .backfill div{display:flex;gap:6px;flex-wrap:wrap}
 
-    /* ===== 首頁主卡：左右金額＋中央圓環 ===== */
-    .hero{padding:16px 16px 18px}
-    .hero-top{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .hero-top div{min-width:0}
-    .hero-top div:last-child{text-align:right}
-    .hero-top span{font-size:13.5px;font-weight:800}
-    .hero-top strong{display:block;font-size:21px;font-weight:900;margin-top:2px;overflow-wrap:anywhere}
-    .hero-top small{display:block;font-size:12px;color:var(--sub)}
-    .ring-wrap{display:grid;place-items:center;margin-top:8px;position:relative}
-    .ring{width:188px;height:188px;border-radius:50%;border:var(--bw) solid var(--line);display:grid;place-items:center;position:relative}
-    .ring:before{content:"";grid-area:1/1;width:124px;height:124px;border-radius:50%;background:#fff;border:var(--bw) solid var(--line)}
-    .ring-center{grid-area:1/1;z-index:1;text-align:center;display:grid;gap:1px;max-width:118px}
-    .ring-center span{font-size:12.5px;color:var(--sub);font-weight:700}
-    .ring-center strong{font-size:20px;font-weight:900;overflow-wrap:anywhere}
-    .ring-center small{font-size:12px;font-weight:800}
-    .ring-legend{display:flex;justify-content:center;gap:14px;margin-top:12px;font-size:13px;font-weight:700;flex-wrap:wrap}
-    .ring-legend i{display:inline-block;width:12px;height:12px;border-radius:4px;border:1.5px solid var(--line);margin-right:5px;vertical-align:-2px}
-    .eye{position:absolute;right:0;top:0;width:40px;height:40px;border-radius:50%;font-size:18px}
+    /* ===== 首頁主視覺：手帳頁 ===== */
+    .hero{padding:24px 18px 18px;margin-top:6px}
+    .tape{position:absolute;top:-11px;left:50%;width:110px;height:24px;transform:translateX(-50%) rotate(-3deg);background:repeating-linear-gradient(45deg,rgba(200,162,122,.55) 0 6px,rgba(200,162,122,.38) 6px 12px);border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+    .hero-date{display:flex;align-items:baseline;gap:10px;border-bottom:1.5px dashed var(--rule);padding-bottom:10px}
+    .hero-date strong{font-family:var(--hand);font-size:38px;line-height:1;letter-spacing:.5px}
+    .hero-date span{font-size:13px;font-weight:800;color:var(--tea-d);letter-spacing:.12em}
+    .eye{margin-left:auto;width:40px;height:40px;border-radius:50%;font-size:17px;align-self:center}
+    .eye:hover{background:var(--fill)}
+    .hero-line{font-family:var(--hand);font-size:18px;margin:14px 0 0;line-height:1.4}
+    .hero-line strong{font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif;font-size:32px;font-weight:800;color:var(--ink);display:inline-block;margin-left:4px}
+    .hero-sub{display:block;font-size:13px;color:var(--sub);margin-top:2px}
+    .hero-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    .hero-pair div{background:var(--fill);border-radius:var(--r-md);padding:10px 12px;min-width:0}
+    .hero-pair div:last-child{background:var(--olive-soft)}
+    .hero-pair span{font-size:13px;font-weight:700;color:var(--sub);display:block}
+    .hero-pair strong{display:block;font-size:20px;font-weight:800;overflow-wrap:anywhere}
+    .hero-pair small{display:block;font-size:12px;color:var(--sub)}
+    .ruler{margin-top:16px}
+    .ruler header{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13.5px}
+    .ruler header b{font-family:var(--hand);font-size:16px}
+    .ruler-bar{position:relative;height:20px;margin-top:6px;border-radius:6px;background:var(--fill);overflow:hidden}
+    .ruler-bar i{position:absolute;inset:0 auto 0 0;background:var(--olive);border-radius:6px 0 0 6px}
+    .ruler-bar i.over{background:var(--terra)}
+    .ruler-bar:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),rgba(74,59,47,.22) calc(10% - 1px) 10%);pointer-events:none}
+    .ruler-scale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);margin-top:3px}
     body.masked .mask{filter:blur(7px);user-select:none}
-    .info-line{font-size:13px;color:var(--ink);background:var(--yellow-soft);border:1.5px dashed var(--yellow-d);border-radius:var(--r-md);padding:8px 12px;margin:0}
+    .info-line{font-size:13.5px;color:#6d4f30;background:var(--tea-soft);border-radius:var(--r-md);padding:9px 12px;margin:0;font-family:var(--hand)}
 
-    /* ===== 常用標籤 ===== */
+    /* ===== 常用：索引標籤 ===== */
     .tags{display:flex;flex-wrap:wrap;gap:8px}
-    .tag{display:inline-flex;align-items:center;gap:6px;border:var(--bw) solid var(--line);border-radius:99px;padding:6px 12px 6px 8px;font-weight:800;font-size:14px;box-shadow:var(--shadow-sm);min-height:40px;max-width:100%}
-    .tag em{font-style:normal;font-weight:700;font-size:12.5px;opacity:.8}
-    .tag .ti{font-size:17px}
-    .tag:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
-    .tag.add{background:#fff;border-style:dashed;box-shadow:none;color:var(--sub)}
-    .tag.editing{outline:2px dashed var(--coral);outline-offset:2px}
-    .t-餐飲{background:#fde3a6}.t-交通{background:#cfe6f7}.t-美容保養{background:#f9cfdc}.t-日常採買{background:#c9efe0}.t-娛樂{background:#e6d2f6}.t-其他{background:#eceff2}
+    .tag{display:inline-flex;align-items:center;gap:6px;border-radius:4px 12px 12px 4px;padding:7px 12px 7px 10px;font-weight:700;font-size:14px;min-height:40px;max-width:100%;border-left:5px solid rgba(74,59,47,.25)}
+    .tag em{font-style:normal;font-weight:600;font-size:12.5px;color:var(--sub)}
+    .tag .ti{font-size:16px}
+    .tag:hover{filter:brightness(.97)}
+    .tag.add{background:transparent;border:1.5px dashed var(--faint);border-radius:12px;color:var(--sub)}
+    .tag.editing{outline:2px dashed var(--terra);outline-offset:2px}
+    .t-餐飲{background:#f6dfba}.t-交通{background:#d6e6dc}.t-美容保養{background:#f4d6cf}.t-日常採買{background:#e1e8c8}.t-娛樂{background:#e6dbee}.t-其他{background:#ece4d8}
 
-    /* ===== 分類圖示（方形色塊＋描邊） ===== */
-    .ic{width:40px;height:40px;border-radius:11px;border:var(--bw) solid var(--line);display:grid;place-items:center;font-size:19px;flex:none}
-    .c-餐飲{background:#fde3a6}.c-交通{background:#cfe6f7}.c-美容保養{background:#f9cfdc}.c-日常採買{background:#c9efe0}.c-娛樂{background:#e6d2f6}.c-其他{background:#eceff2}
-    .c-buy{background:#cfe6f7}.c-refund{background:#c9efe0}.c-loss{background:#eceff2}
+    /* ===== 分類圖示：貼紙 ===== */
+    .ic{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:19px;flex:none;border:3px solid #fff;box-shadow:0 1px 4px rgba(120,90,60,.25)}
+    .c-餐飲{background:#f6dfba}.c-交通{background:#d6e6dc}.c-美容保養{background:#f4d6cf}.c-日常採買{background:#e1e8c8}.c-娛樂{background:#e6dbee}.c-其他{background:#ece4d8}
+    .c-buy{background:#e8edd6}.c-refund{background:#d6e6dc}.c-loss{background:#ece4d8}
 
-    /* ===== 明細 ===== */
-    .day{background:#fff;border:var(--bw) solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
-    .day-head{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:10px 14px;background:var(--blue-soft);border-bottom:var(--bw) solid var(--line)}
-    .day-head b{font-weight:900}
-    .day-head span{font-weight:800}
-    .row{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;text-align:left;padding:10px 14px;position:relative}
-    .row+.row{border-top:1.5px dashed var(--soft-line)}
-    .row:hover{background:#fbfcfd}
-    .row strong{display:block;font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    /* ===== 明細：橫線紙 ===== */
+    .day{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+    .day-head{display:flex;justify-content:space-between;align-items:baseline;padding:12px 16px 6px}
+    .day-head b{font-family:var(--hand);font-size:17px}
+    .day-head span{font-size:13.5px;font-weight:700;color:var(--sub)}
+    .row{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;text-align:left;padding:9px 16px;border-top:1px solid var(--rule)}
+    .row:hover{background:#fdf8ef}
+    .row strong{display:block;font-size:15px;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .row small{display:block;font-size:12.5px;color:var(--sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .row .amt{text-align:right;font-weight:900;white-space:nowrap}
-    .amt.cash{color:var(--blue-d)}.amt.plus{color:#1f9a72}
-    .pay-badge{display:inline-block;font-size:11.5px;font-weight:800;border:1.5px solid var(--line);border-radius:99px;padding:0 6px;background:var(--yellow-soft);margin-right:4px}
+    .row .amt{text-align:right;font-weight:800;white-space:nowrap}
+    .amt.cash{color:var(--tea-d)}.amt.plus{color:var(--olive-d)}
+    .pay-badge{display:inline-block;font-size:11.5px;font-weight:800;border-radius:4px;padding:0 5px;background:var(--olive-soft);color:var(--olive-d);margin-right:4px}
 
     /* ===== 預付款 ===== */
     .pp-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .pp-summary div{border:var(--bw) solid var(--line);border-radius:var(--r-md);padding:10px 12px}
-    .pp-summary div:first-child{background:var(--yellow-soft)}.pp-summary div:last-child{background:var(--blue-soft)}
-    .pp-summary span{font-size:13px;font-weight:700;display:block}
-    .pp-summary strong{font-size:21px;font-weight:900}
+    .pp-summary div{border-radius:var(--r-md);padding:10px 12px;background:var(--fill)}
+    .pp-summary div:first-child{background:var(--olive-soft)}
+    .pp-summary span{font-size:13px;font-weight:700;color:var(--sub);display:block}
+    .pp-summary strong{font-size:22px;font-weight:800}
     .pp-top{display:flex;align-items:center;gap:12px;width:100%;text-align:left}
     .pp-top div{flex:1;min-width:0}
-    .pp-top strong{display:block;font-size:16px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pp-top strong{display:block;font-size:16px;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .pp-top small{display:block;font-size:13px;color:var(--sub)}
     .pp-rem{text-align:right}
-    .pp-rem b{font-size:22px;font-weight:900;display:block;line-height:1.1}
+    .pp-rem b{font-size:24px;font-weight:800;display:block;line-height:1.1}
     .pp-rem small{font-size:12px;color:var(--sub);font-weight:700}
-    .bar{height:12px;background:#fff;border:var(--bw) solid var(--line);border-radius:99px;overflow:hidden;margin-top:12px}
-    .bar i{display:block;height:100%;background:var(--blue);border-right:var(--bw) solid var(--line)}
+    .bar{height:10px;background:var(--fill);border-radius:99px;overflow:hidden;margin-top:12px}
+    .bar i{display:block;height:100%;background:var(--olive);border-radius:99px}
     .pp-foot{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
-    .warn{font-size:13px;font-weight:700;background:var(--coral-soft);border:1.5px solid var(--coral);color:#8f2a1d;border-radius:10px;padding:6px 10px;flex:1;min-width:0}
+    .warn{font-size:13px;font-weight:650;background:var(--terra-soft);color:#8d3d27;border-radius:10px;padding:6px 10px;flex:1;min-width:0}
     .pp-foot .btn{margin-left:auto}
     details.closed summary{list-style:none;cursor:pointer;color:var(--sub);font-size:14px;font-weight:700;padding:10px 4px;min-height:40px}
     details.closed summary::-webkit-details-marker{display:none}
-    details.closed .day{margin-top:4px}
 
     /* ===== 統計 ===== */
-    .insight{font-size:14px;font-weight:600;margin:0;background:var(--yellow-soft)}
-    .daily{position:relative;height:150px;display:flex;align-items:flex-end;gap:2px;padding-top:26px;border-bottom:var(--bw) solid var(--line)}
+    .insight{font-size:16px;margin:0;font-family:var(--hand);line-height:1.5}
+    .daily{position:relative;height:150px;display:flex;align-items:flex-end;gap:2px;padding-top:26px;border-bottom:1.5px solid var(--rule)}
     .daily button{flex:1;height:100%;display:flex;align-items:flex-end;justify-content:center;min-width:0}
-    .daily i{display:block;width:100%;max-width:12px;background:var(--yellow);border:1.5px solid var(--line);border-bottom:0;border-radius:4px 4px 0 0}
+    .daily i{display:block;width:100%;max-width:12px;background:var(--tea);border-radius:4px 4px 0 0}
     .daily i.zero{display:none}
-    .daily button[aria-pressed="true"] i{background:var(--coral)}
-    .avg-line{position:absolute;left:0;right:0;border-top:2px dashed var(--blue-d);pointer-events:none}
-    .avg-line span{position:absolute;right:0;top:-22px;font-size:11.5px;color:var(--blue-d);font-weight:800;background:#fff;padding:0 4px}
-    .tip{position:absolute;top:0;transform:translateX(-50%);background:var(--coral);color:#fff;border:1.5px solid var(--line);font-size:12px;font-weight:800;padding:2px 8px;border-radius:99px;white-space:nowrap;pointer-events:none}
-    .axis{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-top:4px;font-weight:600}
+    .daily button[aria-pressed="true"] i{background:var(--olive)}
+    .avg-line{position:absolute;left:0;right:0;border-top:1.5px dashed var(--olive);pointer-events:none}
+    .avg-line span{position:absolute;right:0;top:-21px;font-size:11.5px;color:var(--olive-d);font-weight:800;background:var(--card);padding:0 4px}
+    .tip{position:absolute;top:0;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap;pointer-events:none}
+    .axis{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-top:4px}
     .donut-wrap{display:flex;align-items:center;gap:18px}
-    .donut{width:136px;height:136px;border-radius:50%;border:var(--bw) solid var(--line);display:grid;place-items:center;flex:none}
-    .donut:before{content:"";grid-area:1/1;width:82px;height:82px;background:#fff;border-radius:50%;border:var(--bw) solid var(--line)}
+    .donut{width:136px;height:136px;border-radius:50%;display:grid;place-items:center;flex:none}
+    .donut:before{content:"";grid-area:1/1;width:88px;height:88px;background:var(--card);border-radius:50%}
     .donut b{grid-area:1/1;z-index:1;text-align:center;font-size:13px;line-height:1.3}
-    .legend{flex:1;min-width:0;display:grid;gap:8px;font-size:14px;font-weight:600}
+    .legend{flex:1;min-width:0;display:grid;gap:8px;font-size:14px}
     .legend div{display:flex;justify-content:space-between;gap:8px}
-    .legend i{display:inline-block;width:12px;height:12px;border-radius:4px;border:1.5px solid var(--line);margin-right:6px;vertical-align:-1px}
+    .legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px}
     .rank{display:grid;gap:12px}
     .rank-row{display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px;align-items:center}
     .rank-row .ic{width:36px;height:36px;font-size:17px}
-    .rank-row header{display:flex;justify-content:space-between;font-size:14px;font-weight:700;gap:8px}
-    .rank-row header small{color:var(--sub);font-weight:600}
-    .rank-row .bar{margin-top:6px;height:10px}
-    .rank-row .bar i{background:var(--yellow)}
-    .rank-row .bar i.over{background:var(--coral)}
-    .months{display:flex;align-items:flex-end;gap:8px;height:124px;border-bottom:var(--bw) solid var(--line)}
+    .rank-row header{display:flex;justify-content:space-between;font-size:14px;font-weight:650;gap:8px}
+    .rank-row header small{color:var(--sub);font-weight:500}
+    .rank-row .bar{margin-top:6px;height:8px}
+    .rank-row .bar i{background:var(--tea)}
+    .rank-row .bar i.over{background:var(--terra)}
+    .months{display:flex;align-items:flex-end;gap:8px;height:124px;border-bottom:1.5px solid var(--rule)}
     .months div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;min-width:0}
-    .months i{display:block;width:100%;max-width:30px;border:1.5px solid var(--line);border-bottom:0;border-radius:6px 6px 0 0;background:#cfe6f7}
-    .months i.cur{background:var(--blue)}.months i.zero{display:none}
-    .months em{font-style:normal;font-size:11px;font-weight:800;white-space:nowrap}
-    .month-axis{display:flex;gap:8px;font-size:12px;color:var(--sub);font-weight:700;margin-top:4px}
+    .months i{display:block;width:100%;max-width:30px;border-radius:6px 6px 0 0;background:var(--tea-soft)}
+    .months i.cur{background:var(--olive)}.months i.zero{display:none}
+    .months em{font-style:normal;font-size:11px;font-weight:700;white-space:nowrap}
+    .month-axis{display:flex;gap:8px;font-size:12px;color:var(--sub);margin-top:4px}
     .month-axis span{flex:1;text-align:center}
 
     /* ===== 設定 ===== */
-    .list{background:#fff;border:var(--bw) solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+    .list{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
     .list-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:13px 16px;min-height:58px}
-    .list-row+.list-row{border-top:1.5px dashed var(--soft-line)}
-    .list-row:hover{background:#fbfcfd}
-    .list-row strong{font-weight:800}
+    .list-row+.list-row{border-top:1px solid var(--rule)}
+    .list-row:hover{background:#fdf8ef}
+    .list-row strong{font-weight:750}
     .list-row p{margin:2px 0 0;font-size:13px;color:var(--sub)}
-    .list-row .chev{font-size:18px;font-weight:900}
-    .list-row.danger strong{color:var(--coral-d)}
-    .section-title{font-size:13px;font-weight:800;color:var(--sub);margin:6px 4px -6px}
+    .list-row .chev{font-size:18px;color:var(--faint)}
+    .list-row.danger strong{color:var(--terra)}
+    .section-title{font-size:14px;color:var(--sub);margin:6px 4px -6px;font-family:var(--hand)}
 
     /* ===== 浮動按鈕／分頁列 ===== */
-    .fab{position:fixed;right:max(16px,calc(50% - 264px));bottom:calc(var(--tab-h) + 30px + var(--safe-b));z-index:20;width:62px;height:62px;border-radius:50%;background:var(--coral);color:#fff;border:var(--bw) solid var(--line);box-shadow:var(--shadow);font-size:32px;font-weight:700;line-height:1;display:grid;place-items:center}
-    .fab:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
-    .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#fff;border-top:var(--bw) solid var(--line);padding:6px 8px calc(6px + var(--safe-b))}
+    .fab{position:fixed;right:max(16px,calc(50% - 264px));bottom:calc(var(--tab-h) + 28px + var(--safe-b));z-index:20;width:60px;height:60px;border-radius:50%;background:var(--olive);color:#fff;box-shadow:0 8px 20px rgba(85,102,46,.35);font-size:24px;display:grid;place-items:center}
+    .fab:hover{background:var(--olive-d)}
+    .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(255,253,248,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--rule);padding:4px 8px calc(4px + var(--safe-b))}
     .tabbar-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;height:var(--tab-h)}
-    .tabbar button{display:grid;justify-items:center;align-content:center;gap:2px;border-radius:14px;color:var(--sub);font-size:12px;font-weight:800;border:var(--bw) solid transparent}
+    .tabbar button{display:grid;justify-items:center;align-content:center;gap:2px;color:var(--faint);font-size:12px;font-weight:700;position:relative}
     .tabbar svg{width:23px;height:23px}
-    .tabbar button[aria-selected="true"]{color:var(--ink);background:var(--yellow);border-color:var(--line)}
+    .tabbar button[aria-selected="true"]{color:var(--olive-d)}
+    .tabbar button[aria-selected="true"]:after{content:"";position:absolute;bottom:3px;width:18px;height:3px;border-radius:2px;background:var(--olive)}
 
     /* ===== Toast ===== */
-    .toast{position:fixed;z-index:60;left:50%;bottom:calc(var(--tab-h) + 104px + var(--safe-b));transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--ink);color:#fff;border-radius:99px;padding:8px 8px 8px 16px;display:flex;gap:10px;align-items:center;transition:.2s;max-width:calc(100% - 32px);font-size:14px;font-weight:700;box-shadow:3px 3px 0 var(--yellow)}
+    .toast{position:fixed;z-index:60;left:50%;bottom:calc(var(--tab-h) + 100px + var(--safe-b));transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--ink);color:#fff8ee;border-radius:12px;padding:9px 9px 9px 16px;display:flex;gap:10px;align-items:center;transition:.2s;max-width:calc(100% - 32px);font-size:14px;font-weight:600}
     .toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
-    .toast button{background:var(--yellow);color:var(--ink);font-weight:900;border-radius:99px;padding:6px 12px;min-height:34px}
+    .toast button{background:rgba(255,255,255,.14);color:#e3d0b4;font-weight:800;border-radius:8px;padding:6px 12px;min-height:34px}
 
     /* ===== 對話框 ===== */
-    dialog{border:var(--bw) solid var(--line);padding:0;background:#fff;color:var(--ink);width:min(520px,calc(100% - 24px));max-height:calc(100dvh - 24px);border-radius:20px;overflow:auto;box-shadow:5px 5px 0 var(--ink)}
-    dialog::backdrop{background:rgba(31,45,61,.45)}
-    .sheet-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:12px 14px;position:sticky;top:0;background:#fff;z-index:2;border-bottom:var(--bw) solid var(--line)}
-    .sheet-head h2{margin:0;font-size:16px;font-weight:900;text-align:center}
+    dialog{border:0;padding:0;background:var(--paper);color:var(--ink);width:min(520px,calc(100% - 24px));max-height:calc(100dvh - 24px);border-radius:20px;overflow:auto;box-shadow:0 20px 60px rgba(74,59,47,.3)}
+    dialog::backdrop{background:rgba(74,59,47,.4)}
+    .sheet-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:12px 14px;position:sticky;top:0;background:var(--paper);z-index:2;border-bottom:1px solid var(--rule)}
+    .sheet-head h2{margin:0;font-size:18px;text-align:center}
     .sheet-head .link{justify-self:start;margin:0;padding:8px 4px}
     .sheet-head .link.r{justify-self:end}
-    .sheet-head .link.red{color:var(--coral-d)}
+    .sheet-head .link.red{color:var(--terra)}
     .sheet-sub{text-align:center;font-size:13px;color:var(--sub);margin:10px 16px 0}
     .sheet-body{padding:14px 16px 18px;display:grid;gap:12px}
-    .group{border:var(--bw) solid var(--line);border-radius:var(--r-lg);padding:14px}
+    .group{background:var(--card);border-radius:var(--r-lg);padding:14px;box-shadow:var(--shadow)}
     .field{display:grid;gap:6px}
-    .field label,.flabel{font-size:13px;font-weight:800}
-    .field input,.field select,.field textarea,.input{border:var(--bw) solid var(--line);background:#fff;border-radius:11px;padding:10px 12px;width:100%;min-height:44px;outline:none}
-    .field input:focus,.field select:focus,.field textarea:focus,.input:focus{box-shadow:3px 3px 0 var(--blue)}
-    .field input:disabled,.field select:disabled{background:var(--fill);opacity:.7}
+    .field label,.flabel{font-size:13px;font-weight:700;color:var(--sub)}
+    .field input,.field select,.field textarea,.input{border:1.5px solid var(--rule);background:#fff;border-radius:10px;padding:10px 12px;width:100%;min-height:44px;outline:none}
+    .field input:focus,.field select:focus,.field textarea:focus,.input:focus{border-color:var(--olive);box-shadow:0 0 0 3px var(--olive-soft)}
+    .field input:disabled,.field select:disabled{background:var(--fill);opacity:.75}
     .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .hint{font-size:13px;color:var(--sub)}
-    .note{font-size:13.5px;font-weight:600;border-radius:11px;padding:9px 12px;background:var(--blue-soft);border:1.5px solid var(--blue-d)}
-    .note.warn{background:var(--coral-soft);border-color:var(--coral)}
+    .note{font-size:13.5px;border-radius:10px;padding:9px 12px;background:var(--olive-soft);color:#3f4b20}
+    .note.warn{background:var(--terra-soft);color:#8d3d27}
     .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .seg{display:flex;border:var(--bw) solid var(--line);border-radius:99px;padding:3px;gap:3px;background:#fff}
-    .seg button{flex:1;padding:7px 10px;border-radius:99px;font-size:14px;font-weight:800;min-height:36px;color:var(--sub)}
-    .seg button[aria-pressed="true"]{background:var(--yellow);color:var(--ink);box-shadow:inset 0 0 0 var(--bw) var(--line)}
+    .seg{display:flex;background:var(--fill);border-radius:12px;padding:3px;gap:3px}
+    .seg button{flex:1;padding:7px 10px;border-radius:9px;font-size:14px;font-weight:700;min-height:36px;color:var(--sub)}
+    .seg button[aria-pressed="true"]{background:var(--card);color:var(--olive-d);box-shadow:0 1px 3px rgba(74,59,47,.15)}
 
     /* 記帳面板 */
     .tx-sheet .sheet-body{gap:10px}
     .cat-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
-    .cat{display:grid;justify-items:center;gap:4px;padding:4px 0;font-size:12px;font-weight:700;color:var(--sub);min-width:0;border-radius:12px}
-    .cat .ic{width:44px;height:44px;font-size:21px;transition:transform .1s,box-shadow .1s}
+    .cat{display:grid;justify-items:center;gap:4px;padding:4px 0;font-size:12px;font-weight:650;color:var(--sub);min-width:0}
+    .cat .ic{width:44px;height:44px;font-size:21px;transition:transform .12s}
     .cat[aria-pressed="true"]{color:var(--ink)}
-    .cat[aria-pressed="true"] .ic{box-shadow:var(--shadow-sm);transform:translate(-1px,-1px);outline:3px solid var(--yellow);outline-offset:1px}
+    .cat[aria-pressed="true"] .ic{transform:rotate(-6deg) scale(1.08);box-shadow:0 0 0 2.5px var(--olive),0 3px 8px rgba(120,90,60,.3)}
     .chips{display:flex;gap:6px;flex-wrap:wrap}
-    .chip{background:#fff;border:var(--bw) solid var(--line);border-radius:99px;padding:6px 13px;font-size:14px;font-weight:800;min-height:38px}
-    .chip[aria-pressed="true"]{background:var(--blue);color:#fff;box-shadow:var(--shadow-sm)}
-    .input-bar{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;border:var(--bw) solid var(--line);border-radius:var(--r-lg);padding:10px 12px;background:#fff}
+    .chip{background:var(--card);border:1.5px solid var(--rule);border-radius:10px;padding:6px 13px;font-size:14px;font-weight:700;min-height:38px}
+    .chip[aria-pressed="true"]{background:var(--olive-soft);border-color:var(--olive);color:var(--olive-d)}
+    .input-bar{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;border-radius:var(--r-lg);padding:12px 14px;background:var(--card);box-shadow:var(--shadow)}
     .input-bar .ic{width:46px;height:46px;font-size:22px}
     .amount-line{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;min-width:0}
-    .amount-line span{font-size:18px;font-weight:800;color:var(--sub)}
-    .amount-line output{font-size:36px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums;overflow:hidden}
+    .amount-line span{font-size:18px;font-weight:700;color:var(--sub)}
+    .amount-line output{font-size:36px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;overflow:hidden}
     .amount-line.empty output{color:var(--faint)}
-    .lock{font-size:12.5px;font-weight:800;background:var(--yellow-soft);border:1.5px solid var(--yellow-d);border-radius:99px;padding:1px 8px;margin-right:auto;align-self:center;white-space:nowrap}
-    .name-input{grid-column:1/-1;border:0;border-top:1.5px dashed var(--soft-line);padding:10px 2px 2px;width:100%;font-size:16px;outline:none;background:transparent}
+    .lock{font-size:12.5px;font-weight:700;background:var(--tea-soft);color:#6d4f30;border-radius:6px;padding:1px 8px;margin-right:auto;align-self:center;white-space:nowrap}
+    .name-input{grid-column:1/-1;border:0;border-top:1.5px dashed var(--rule);padding:10px 2px 2px;width:100%;font-size:16px;outline:none;background:transparent;font-family:var(--hand)}
     .meta-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .date-chip{display:flex;align-items:center;gap:4px;background:#fff;border:var(--bw) solid var(--line);border-radius:99px;padding:0 4px 0 10px;min-height:38px}
-    .date-chip input{border:0;background:transparent;font-size:14px;font-weight:800;min-height:34px;outline:none;width:128px}
-    .check{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700;min-height:36px;margin-left:auto}
-    .check input{width:18px;height:18px;accent-color:var(--blue-d)}
-    .keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;background:var(--yellow);border:var(--bw) solid var(--line);padding:12px;border-radius:var(--r-lg)}
-    .keypad button{background:#fff;border:var(--bw) solid var(--line);border-radius:99px;min-height:50px;font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;box-shadow:var(--shadow-sm)}
-    .keypad button:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
-    .keypad .k-fn{background:var(--blue);color:#fff;font-size:17px}
+    .date-chip{display:flex;align-items:center;gap:4px;background:var(--card);border:1.5px solid var(--rule);border-radius:10px;padding:0 4px 0 10px;min-height:38px}
+    .date-chip input{border:0;background:transparent;font-size:14px;font-weight:700;min-height:34px;outline:none;width:128px}
+    .check{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:650;min-height:36px;margin-left:auto}
+    .check input{width:18px;height:18px;accent-color:var(--olive)}
+    .keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--tea-soft);padding:10px;border-radius:var(--r-lg)}
+    .keypad button{background:var(--card);border-radius:10px;min-height:50px;font-size:21px;font-weight:650;font-variant-numeric:tabular-nums;box-shadow:0 2px 0 rgba(156,119,82,.35)}
+    .keypad button:active{transform:translateY(2px);box-shadow:none}
+    .keypad .k-fn{background:#f8f1e6;color:var(--tea-d);font-size:17px;font-weight:800}
     .keypad .k-zero{grid-column:span 2}
-    .keypad .k-ok{grid-row:span 2;background:var(--coral);color:#fff;font-size:18px;font-weight:900;border-radius:28px}
+    .keypad .k-ok{grid-row:span 2;background:var(--olive);color:#fff;font-size:18px;font-weight:800;box-shadow:0 2px 0 var(--olive-d);font-family:var(--hand)}
     .keypad.locked button:not(.k-ok){opacity:.35;pointer-events:none}
 
     /* 詳細頁 */
     .stat3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-    .stat3 div{border:var(--bw) solid var(--line);border-radius:var(--r-md);padding:9px 10px;background:var(--blue-soft)}
-    .stat3 span{display:block;font-size:12.5px;font-weight:700}
-    .stat3 strong{font-size:17px;font-weight:900}
+    .stat3 div{border-radius:var(--r-md);padding:9px 10px;background:var(--card);box-shadow:var(--shadow)}
+    .stat3 span{display:block;font-size:12.5px;color:var(--sub);font-weight:650}
+    .stat3 strong{font-size:17px;font-weight:800}
     .meta{font-size:14px;display:grid;gap:4px}
-    .meta span{color:var(--sub);font-weight:700}
+    .meta span{color:var(--sub);font-weight:650}
     .actions{display:flex;flex-wrap:wrap;gap:8px}
-    .badge{display:inline-block;font-size:12px;font-weight:800;padding:1px 8px;border-radius:99px;border:1.5px solid var(--line);background:var(--fill);margin-left:6px;vertical-align:middle}
+    .badge{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:6px;background:var(--fill);color:var(--sub);margin-left:6px;vertical-align:middle;font-family:-apple-system,sans-serif}
 
     @media(min-width:900px){.app{padding-top:22px}dialog{width:min(480px,calc(100% - 24px))}}
     @media(max-width:640px){
-      dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:20px 20px 0 0;border-bottom:0;max-height:94dvh;box-shadow:none;padding-bottom:var(--safe-b)}
+      dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:20px 20px 0 0;max-height:94dvh;padding-bottom:var(--safe-b)}
     }
     @media(max-width:380px){
       .cat .ic{width:38px;height:38px;font-size:18px}
-      .ring{width:168px;height:168px}.ring:before{width:110px;height:110px}
-      .hero-top strong{font-size:18px}
+      .hero-line strong{font-size:27px}
+      .hero-pair strong{font-size:17px}
       .stat3 strong{font-size:15px}
     }
   </style>
@@ -283,9 +292,9 @@
     <!-- 明細 -->
     <section class="page" id="page-home">
       <article class="card hidden" id="welcome">
-        <h2 style="margin:0 0 6px;font-size:18px;font-weight:900"><span class="hl">歡迎使用 Money Flow</span></h2>
+        <h2 style="margin:0 0 6px;font-size:18px;font-weight:900">歡迎使用 Money Flow ✎</h2>
         <p class="muted" style="margin:0 0 12px">資料只存在這個瀏覽器裡，不會上傳。可以直接開始，或先看示範資料（之後在「設定」一鍵清空）。</p>
-        <div class="btn-row"><button class="btn coral" data-act="start-fresh">直接開始</button><button class="btn" data-act="start-demo">看示範資料</button></div>
+        <div class="btn-row"><button class="btn primary" data-act="start-fresh">直接開始</button><button class="btn" data-act="start-demo">看示範資料</button></div>
       </article>
 
       <article class="card" id="checkinCard" style="padding:12px 14px">
@@ -298,15 +307,14 @@
       </article>
 
       <article class="card hero">
-        <div class="hero-top">
-          <div><span class="hl">實際消費</span><strong class="num mask" id="expenseTotal">$0</strong><small id="expenseSub"></small></div>
-          <div><span class="hl blue">已付款金額</span><strong class="num mask" id="cashflowTotal">$0</strong><small id="cashSub"></small></div>
+        <span class="tape" aria-hidden="true"></span>
+        <div class="hero-date"><strong id="heroDate"></strong><span id="heroWeek"></span><button class="eye" data-act="toggle-mask" id="eyeBtn" aria-label="隱藏金額">👁</button></div>
+        <p class="hero-line"><span id="heroLead">這個月真正花掉</span><strong class="num mask" id="expenseTotal">$0</strong><small class="hero-sub" id="expenseSub"></small></p>
+        <div class="hero-pair">
+          <div><span>已付款金額</span><strong class="num mask" id="cashflowTotal">$0</strong><small id="cashSub"></small></div>
+          <div><span>預付款還剩</span><strong class="num mask" id="ppBalance">$0</strong><small id="ppBalanceSub">還沒用掉的錢</small></div>
         </div>
-        <div class="ring-wrap">
-          <div class="ring" id="ring"><div class="ring-center" id="ringCenter"></div></div>
-          <button class="eye" data-act="toggle-mask" id="eyeBtn" aria-label="隱藏金額">👁</button>
-        </div>
-        <div class="ring-legend" id="ringLegend"></div>
+        <div class="ruler" id="budgetRuler"></div>
       </article>
       <p class="info-line hidden" id="prepaidNote"></p>
 
@@ -374,7 +382,7 @@
     </section>
   </main>
 
-  <button class="fab" id="fab" data-act="new-tx" aria-label="記一筆">＋</button>
+  <button class="fab" id="fab" data-act="new-tx" aria-label="記一筆">✎</button>
   <nav class="tabbar"><div class="tabbar-in" role="tablist">
     <button role="tab" data-tab="home" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1.3" fill="currentColor"/><circle cx="4" cy="12" r="1.3" fill="currentColor"/><circle cx="4" cy="18" r="1.3" fill="currentColor"/></svg>明細</button>
     <button role="tab" data-tab="prepaid" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M7 15h4"/></svg>預付款</button>
@@ -405,7 +413,7 @@
       <div class="keypad" id="keypad">
         <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button><button type="button" data-key="del" class="k-fn" aria-label="刪除一位">⌫</button>
         <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button><button type="button" data-key="clear" class="k-fn">AC</button>
-        <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button><button type="button" data-key="ok" class="k-ok" id="saveTx">OK</button>
+        <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button><button type="button" data-key="ok" class="k-ok" id="saveTx">記下</button>
         <button type="button" data-key="00">00</button><button type="button" data-key="0" class="k-zero">0</button>
       </div>
     </div>
@@ -474,7 +482,7 @@
     <div class="sheet-body" style="padding-top:20px;text-align:center">
       <h2 id="cTitle" style="margin:0;font-size:18px;font-weight:900"></h2>
       <p id="cMsg" class="muted" style="margin:0 0 6px;font-size:14px"></p>
-      <div class="btn-row"><button class="btn" data-close type="button">取消</button><button class="btn coral" id="cOk" type="button">確定</button></div>
+      <div class="btn-row"><button class="btn" data-close type="button">取消</button><button class="btn primary" id="cOk" type="button">確定</button></div>
     </div>
   </dialog>
 
@@ -485,7 +493,7 @@
     const KEY='money-flow-v2', OLD_KEY='money-flow-v1';
     const CATS=['餐飲','交通','美容保養','日常採買','娛樂','其他'];
     const ICON={餐飲:'🍜',交通:'🚇',美容保養:'💆',日常採買:'🛒',娛樂:'🎬',其他:'📦'};
-    const DONUT=['#f5c85c','#5fa9da','#e56b5b','#4cc9a0','#a058d6'];
+    const DONUT=['#c8a27a','#6f8240','#c9654a','#8fb4a3','#b39ccf'];
     const PAYS=['現金','信用卡','行動支付'];
     const WEEK='日一二三四五六';
     const GUESS=[[/咖啡|餐|麵|飯|食|飲|早午|便當|火鍋|拉麵|小吃|甜點|手搖/,'餐飲'],[/捷運|公車|計程|uber|高鐵|火車|加油|停車|機車/i,'交通'],[/洗頭|剪髮|燙|染|髮|按摩|做臉|美甲|醫美|美容|spa|療程/i,'美容保養'],[/超商|全聯|超市|日用|家樂福|好市多|藥妝/,'日常採買'],[/電影|唱歌|ktv|遊戲|演唱會|展覽|健身|瑜伽/i,'娛樂']];
@@ -596,7 +604,7 @@
     function ringGradient(parts){
       const total=parts.reduce((a,p)=>a+p.v,0);if(!total) return '#fff';
       const gap=parts.filter(p=>p.v>0).length>1?1.6:0;let acc=0;const stops=[];
-      parts.forEach(p=>{if(!p.v) return;const a=acc/total*360,b=(acc+p.v)/total*360;acc+=p.v;stops.push(`${p.c} ${a+gap/2}deg ${Math.max(a+gap/2,b-gap/2)}deg`,`#fff ${Math.max(a+gap/2,b-gap/2)}deg ${b+gap/2}deg`)});
+      parts.forEach(p=>{if(!p.v) return;const a=acc/total*360,b=(acc+p.v)/total*360;acc+=p.v;stops.push(`${p.c} ${a+gap/2}deg ${Math.max(a+gap/2,b-gap/2)}deg`,`#fffdf8 ${Math.max(a+gap/2,b-gap/2)}deg ${b+gap/2}deg`)});
       return `conic-gradient(${stops.join(',')})`;
     }
 
@@ -627,26 +635,27 @@
       $('#expenseTotal').textContent=money(m.spend);$('#cashflowTotal').textContent=money(m.cash);
       $('#expenseSub').textContent=m.viaPrepaid?`含預付款扣抵 ${money(m.viaPrepaid)}`:`${m.tx.length} 筆`;
       $('#cashSub').textContent=m.buys?`含購買預付款 ${money(m.buys)}`:'實際付出去的錢';
-      renderRing(m);
+      renderHeroExtra(m);
       const parts=[];if(m.buys) parts.push(`本月購買預付款 ${money(m.buys)}，只算付款，不算消費與預算`);if(m.refunds) parts.push(`收到預付款退款 ${money(m.refunds)}`);
       $('#prepaidNote').textContent=parts.length?'💡 '+parts.join('；')+'。':'';$('#prepaidNote').classList.toggle('hidden',!parts.length);
       $('#eyeBtn').textContent=masked?'🙈':'👁';$('#eyeBtn').setAttribute('aria-label',masked?'顯示金額':'隱藏金額');
       renderDays();
     }
-    /* 中央圓環：有預算時顯示「已花／剩餘」，沒預算時顯示分類比例 */
-    function renderRing(m){
-      const r=$('#ring'),c=$('#ringCenter'),lg=$('#ringLegend');
-      if(state.budget>0){
-        const left=state.budget-m.spend,over=left<0;
-        r.style.background=over?'var(--coral)':ringGradient([{v:m.spend,c:'#f5c85c'},{v:left,c:'#5fa9da'}]);
-        c.innerHTML=`<span>${over?'已超支':'剩餘預算'}</span><strong class="num mask" style="${over?'color:var(--coral-d)':''}">${money(Math.abs(left))}</strong><small>已用 ${Math.round(m.spend/state.budget*100)}% · <button class="link" data-act="edit-budget" style="margin:0;padding:0;min-height:0;font-size:12px">編輯</button></small>`;
-        lg.innerHTML=`<span><i style="background:#f5c85c"></i>已花 ${Math.round(Math.min(1,m.spend/state.budget)*100)}%</span><span><i style="background:${over?'var(--coral)':'#5fa9da'}"></i>${over?'超出預算':'剩餘'}</span><span class="muted" style="font-weight:700">預算 ${money(state.budget)}</span>`;
-      }else{
-        const groups=Object.entries(m.byCat).sort((a,b)=>b[1]-a[1]).slice(0,5);
-        r.style.background=ringGradient(groups.map(([,v],i)=>({v,c:DONUT[i]})));
-        c.innerHTML=m.spend?`<span>本月消費</span><strong class="num mask">${money(m.spend)}</strong><small><button class="link" data-act="edit-budget" style="margin:0;padding:0;min-height:0;font-size:12px">設定預算</button></small>`:`<span>還沒有消費</span><small><button class="link" data-act="edit-budget" style="margin:0;padding:0;min-height:0;font-size:12px">設定預算</button></small>`;
-        lg.innerHTML=groups.map(([cat],i)=>`<span><i style="background:${DONUT[i]}"></i>${esc(cat)}</span>`).join('');
-      }
+    /* 手帳頁：日期、預付款餘額、預算尺 */
+    function renderHeroExtra(m){
+      const isCur=viewMonth===curMonth(),t=new Date();
+      $('#heroDate').textContent=isCur?`${pad(t.getMonth()+1)}.${pad(t.getDate())}`:`${viewMonth.slice(0,4)}.${viewMonth.slice(5)}`;
+      $('#heroWeek').textContent=isCur?['SUN','MON','TUE','WED','THU','FRI','SAT'][t.getDay()]:'MONTH';
+      $('#heroLead').textContent=isCur?'這個月真正花掉':`${mLabel(viewMonth)}真正花掉`;
+      const act=state.prepaids.map(p=>ppStats(p)).filter(st=>st.active);
+      $('#ppBalance').textContent=money(act.reduce((a,st)=>a+st.remValue,0));
+      $('#ppBalanceSub').textContent=act.length?`${act.length} 個方案，還沒用掉的錢`:'還沒有預付款';
+      const el=$('#budgetRuler');
+      if(!(state.budget>0)){el.innerHTML=`<header><b>預算</b><button class="link" data-act="edit-budget" style="margin:0;padding:0;min-height:0">＋ 設定每月預算</button></header>`;return}
+      const used=m.spend/state.budget,left=state.budget-m.spend,over=left<0;
+      el.innerHTML=`<header><b>預算 ${money(state.budget)}</b><span class="${over?'':'muted'}" style="${over?'color:var(--terra);font-weight:800':''}">${over?`已超支 <span class="num mask">${money(-left)}</span>`:`還能花 <span class="num mask">${money(left)}</span>`} · 已用 ${Math.round(used*100)}%</span></header>
+        <div class="ruler-bar"><i class="${over?'over':''}" style="width:${Math.min(100,used*100)}%"></i></div>
+        <div class="ruler-scale"><span>0</span><span>50%</span><span>100%</span></div>`;
     }
     function renderCheckin(){
       const s=doneSet(),t=today(),y=addDays(t,-1),n=streak(),hasTx=state.transactions.some(x=>x.date===t&&x.kind!=='loss'),noSpend=state.noSpendDays.includes(t);
@@ -703,7 +712,7 @@
         return `<article class="card"><button class="pp-top" data-act="pp-detail" data-id="${p.id}">${ic(p.category)}<div><strong>${esc(p.name)}</strong><small>${sess?`每次 ${money(unitPrice(p,st))} · 剩餘價值 ${money(st.remValue)}`:`儲值 ${money(p.price)}`}</small></div>
           <div class="pp-rem"><b class="num">${sess?st.remUnits:money(st.remValue)}</b><small>${sess?`/ ${p.units} 次`:'剩餘'}</small></div></button>
           <div class="bar"><i style="width:${Math.max(0,Math.min(100,pct))}%;${pct<=0?'border:0':''}"></i></div>
-          <div class="pp-foot">${w?`<span class="warn">⏰ ${esc(w)}</span>`:`<span class="muted">${p.expiry?'到期 '+shortDate(p.expiry):st.lastUse?'上次使用 '+shortDate(st.lastUse):'尚未使用'}</span>`}<button class="btn yellow sm" data-act="pp-use" data-id="${p.id}">使用一次</button></div></article>`}).join('')
+          <div class="pp-foot">${w?`<span class="warn">⏰ ${esc(w)}</span>`:`<span class="muted">${p.expiry?'到期 '+shortDate(p.expiry):st.lastUse?'上次使用 '+shortDate(st.lastUse):'尚未使用'}</span>`}<button class="btn accent sm" data-act="pp-use" data-id="${p.id}">使用一次</button></div></article>`}).join('')
         :'<div class="card empty">還沒有使用中的預付款。<br>買了療程、課程或儲值金時，按下方「＋ 新增預付款」。</div>';
       $('#ppClosed').innerHTML=done.length?`<details class="closed"><summary>▸ 已結束的方案（${done.length}）</summary><div class="day">${done.map(({p})=>`<button class="row" data-act="pp-detail" data-id="${p.id}">${ic(p.category)}<div><strong>${esc(p.name)}</strong><small>${p.refund?'已退款':p.closed?'已作廢':'已用完'}</small></div><div class="amt num" style="color:var(--sub)">${money(p.price)}</div></button>`).join('')}</div></details>`:'';
     }
@@ -888,8 +897,8 @@
       let html=`<div class="stat3">${stats.map(([k,v])=>`<div><span>${k}</span><strong class="num">${v}</strong></div>`).join('')}</div>
         <div class="group meta"><div><span>購買　</span>${p.purchaseDate||'未記錄'} · ${money(p.price)} · ${esc(p.payment||'')}</div><div><span>到期　</span>${p.expiry||'未設定'}</div><div><span>分類　</span>${esc(p.category)}</div>${p.refund?`<div><span>退款　</span>${p.refund.date} · ${money(p.refund.amount)}</div>`:''}</div>
         ${w?`<div class="note warn">⏰ ${esc(w)}</div>`:''}
-        <div class="actions">${st.active?`<button class="btn yellow sm" data-act="pp-use" data-id="${p.id}">使用一次</button>`:''}<button class="btn sm" data-act="pp-edit" data-id="${p.id}">編輯</button>${!p.closed&&st.remValue>0?`<button class="btn sm" data-act="pp-refund-panel" data-id="${p.id}">記錄退款</button><button class="btn sm" data-act="pp-void" data-id="${p.id}">剩餘作廢</button>`:''}${!st.txs.length&&!p.refund?`<button class="btn sm" style="color:var(--coral-d)" data-act="pp-delete" data-id="${p.id}">刪除</button>`:''}</div>`;
-      if(panel==='refund') html+=`<form class="group" id="refundForm" style="display:grid;gap:10px"><strong>記錄退款</strong><div class="two"><div class="field"><label for="rAmount">退回金額（最多 ${money(st.remValue)}）</label><input id="rAmount" type="number" inputmode="numeric" min="0" max="${st.remValue}" step="1" value="${st.remValue}" required></div><div class="field"><label for="rDate">退款日期</label><input id="rDate" type="date" value="${today()}" max="${today()}" required></div></div><span class="hint">退回的錢從「已付款」扣掉；沒退回的差額認列為消費，方案隨後結束。</span><button class="btn coral block" type="submit">確認退款</button></form>`;
+        <div class="actions">${st.active?`<button class="btn accent sm" data-act="pp-use" data-id="${p.id}">使用一次</button>`:''}<button class="btn sm" data-act="pp-edit" data-id="${p.id}">編輯</button>${!p.closed&&st.remValue>0?`<button class="btn sm" data-act="pp-refund-panel" data-id="${p.id}">記錄退款</button><button class="btn sm" data-act="pp-void" data-id="${p.id}">剩餘作廢</button>`:''}${!st.txs.length&&!p.refund?`<button class="btn sm" style="color:var(--coral-d)" data-act="pp-delete" data-id="${p.id}">刪除</button>`:''}</div>`;
+      if(panel==='refund') html+=`<form class="group" id="refundForm" style="display:grid;gap:10px"><strong>記錄退款</strong><div class="two"><div class="field"><label for="rAmount">退回金額（最多 ${money(st.remValue)}）</label><input id="rAmount" type="number" inputmode="numeric" min="0" max="${st.remValue}" step="1" value="${st.remValue}" required></div><div class="field"><label for="rDate">退款日期</label><input id="rDate" type="date" value="${today()}" max="${today()}" required></div></div><span class="hint">退回的錢從「已付款」扣掉；沒退回的差額認列為消費，方案隨後結束。</span><button class="btn primary block" type="submit">確認退款</button></form>`;
       html+=`<p class="section-title" style="margin:6px 4px 0">使用紀錄（${st.uses.length} 次${p.usedBefore&&p.usedBefore.units?`，另有記帳前已用 ${p.usedBefore.units} 次`:''}）</p><div class="day">${uses.length?uses.map(t=>rowHtml({type:t.kind==='loss'?'loss':'tx',t},true)).join(''):'<div class="empty">還沒有使用紀錄。</div>'}</div>`;
       $('#dBody').innerHTML=html;$('#detailDialog').showModal();
       const rf=$('#refundForm');if(rf){rf.onsubmit=ev=>{ev.preventDefault();if(!rf.reportValidity()) return;doRefund(p,Math.round(Number($('#rAmount').value)),$('#rDate').value)}}
