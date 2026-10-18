@@ -190,7 +190,7 @@
     .fab{position:fixed;right:max(16px,calc(50% - 264px));bottom:calc(var(--tab-h) + 28px + var(--safe-b));z-index:20;width:60px;height:60px;border-radius:50%;background:var(--olive);color:#fff;box-shadow:0 8px 20px rgba(85,102,46,.35);font-size:24px;display:grid;place-items:center}
     .fab:hover{background:var(--olive-d)}
     .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(255,253,248,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--rule);padding:4px 8px calc(4px + var(--safe-b))}
-    .tabbar-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;height:var(--tab-h)}
+    .tabbar-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;height:var(--tab-h)}
     .tabbar button{display:grid;justify-items:center;align-content:center;gap:2px;color:var(--faint);font-size:12px;font-weight:700;position:relative}
     .tabbar svg{width:23px;height:23px}
     .tabbar button[aria-selected="true"]{color:var(--olive-d)}
@@ -267,6 +267,29 @@
     .actions{display:flex;flex-wrap:wrap;gap:8px}
     .badge{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:6px;background:var(--fill);color:var(--sub);margin-left:6px;vertical-align:middle;}
 
+    /* ===== 頂部設定／訂閱／分帳 ===== */
+    .top-right{display:flex;align-items:center;gap:8px}
+    .gear{width:40px;height:40px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);font-size:18px;color:var(--sub);display:grid;place-items:center}
+    .gear[aria-pressed="true"]{background:var(--olive-soft);color:var(--olive-d)}
+    .due{display:flex;align-items:center;gap:12px;border-left:5px solid var(--terra)}
+    .due div{flex:1;min-width:0}
+    .due strong{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .due small{display:block;font-size:12.5px;color:var(--sub)}
+    .due .acts{display:flex;gap:6px;flex:none}
+    .sub-badge{display:inline-block;font-size:11.5px;font-weight:700;border-radius:4px;padding:0 5px;background:var(--tea-soft);color:#6d4f30;margin-left:4px}
+    .people{display:grid;gap:8px}
+    .person-row{display:grid;grid-template-columns:minmax(0,1fr) 110px 36px;gap:6px;align-items:center}
+    .person-row input{border:1.5px solid var(--rule);background:#fff;border-radius:10px;padding:9px 10px;min-height:42px;width:100%;outline:none}
+    .person-row input:focus{border-color:var(--olive)}
+    .person-row button{width:36px;height:36px;border-radius:50%;color:var(--sub);font-size:18px}
+    .person-row button:hover{background:var(--fill)}
+    .debt-card .card-head{margin-bottom:6px}
+    .debt-card .card-head h2 b{font-size:15px;margin-left:6px;font-family:inherit}
+    .debt-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--rule)}
+    .debt-row small{display:block;color:var(--sub);font-size:12.5px}
+    .debt-row strong{display:block;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .debt-row .amt{font-weight:800;white-space:nowrap}
+    .owe-in{color:var(--olive-d)}.owe-out{color:var(--terra)}
     @media(min-width:900px){.app{padding-top:22px}dialog{width:min(480px,calc(100% - 24px))}}
     @media(max-width:640px){
       dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:20px 20px 0 0;max-height:94dvh;padding-bottom:var(--safe-b)}
@@ -283,7 +306,7 @@
   <main class="app">
     <header class="topbar">
       <div class="brand" id="pageTitle"><i>$</i><span id="pageTitleText">明細</span></div>
-      <div class="month-nav" id="monthNav"><button data-act="month-prev" aria-label="上個月">◀</button><strong id="monthLabel"></strong><button data-act="month-next" aria-label="下個月">▶</button></div>
+      <div class="top-right"><div class="month-nav" id="monthNav"><button data-act="month-prev" aria-label="上個月">◀</button><strong id="monthLabel"></strong><button data-act="month-next" aria-label="下個月">▶</button></div><button class="gear" data-act="open-settings" id="gearBtn" aria-label="設定">⚙︎</button></div>
     </header>
 
     <!-- 明細 -->
@@ -293,6 +316,8 @@
         <p class="muted" style="margin:0 0 12px">資料只存在這個瀏覽器裡，不會上傳。可以直接開始，或先看示範資料（之後在「設定」一鍵清空）。</p>
         <div class="btn-row"><button class="btn primary" data-act="start-fresh">直接開始</button><button class="btn" data-act="start-demo">看示範資料</button></div>
       </article>
+
+      <div id="dueSubs" class="page hidden"></div>
 
       <article class="card" id="checkinCard" style="padding:12px 14px">
         <div class="streak-row">
@@ -335,6 +360,32 @@
       <div id="ppList" class="page"></div>
       <button class="btn block" data-act="new-prepaid">＋ 新增預付款</button>
       <div id="ppClosed"></div>
+    </section>
+
+    <!-- 訂閱 -->
+    <section class="page hidden" id="page-subs">
+      <article class="card">
+        <div class="pp-summary">
+          <div><span>每月固定支出（我的部分）</span><strong class="num" id="subMonthly">$0</strong></div>
+          <div><span>訂閱中</span><strong class="num" id="subCount">0</strong></div>
+        </div>
+        <p class="muted" style="margin:12px 2px 0">扣款日會在首頁提醒，按「記下」才入帳。年繳的費用付款當月計入「已付款」，消費平均攤到 12 個月。</p>
+      </article>
+      <div id="subList" class="page"></div>
+      <button class="btn block" data-act="new-sub">＋ 新增訂閱</button>
+    </section>
+
+    <!-- 分帳 -->
+    <section class="page hidden" id="page-split">
+      <article class="card">
+        <div class="pp-summary">
+          <div><span>朋友欠我</span><strong class="num" id="oweMe">$0</strong></div>
+          <div style="background:var(--terra-soft)"><span>我欠朋友</span><strong class="num" id="iOwe">$0</strong></div>
+        </div>
+        <p class="muted" style="margin:12px 2px 0">記帳時選「分帳」就會出現在這裡。朋友還你錢時按「已收回」，「已付款金額」會扣回來；你還朋友錢時按「已還款」，那天才計入「已付款」。</p>
+      </article>
+      <div id="splitList" class="page"></div>
+      <div id="splitDone"></div>
     </section>
 
     <!-- 統計 -->
@@ -383,8 +434,9 @@
   <nav class="tabbar"><div class="tabbar-in" role="tablist">
     <button role="tab" data-tab="home" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1.3" fill="currentColor"/><circle cx="4" cy="12" r="1.3" fill="currentColor"/><circle cx="4" cy="18" r="1.3" fill="currentColor"/></svg>明細</button>
     <button role="tab" data-tab="prepaid" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M7 15h4"/></svg>預付款</button>
+    <button role="tab" data-tab="subs" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/><path d="M12 8v4l2.5 2"/></svg>訂閱</button>
+    <button role="tab" data-tab="split" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><circle cx="17" cy="9.5" r="2.6"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5M15 14.2c2.6-.3 4.8 1.2 5.5 4.3"/></svg>分帳</button>
     <button role="tab" data-tab="stats" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/></svg>統計</button>
-    <button role="tab" data-tab="settings" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg>設定</button>
   </div></nav>
 
   <!-- 記帳面板 -->
@@ -403,8 +455,22 @@
       </div>
       <div class="meta-row">
         <label class="date-chip">📅<input type="date" id="tDate" aria-label="消費日期"></label>
+        <button class="chip" type="button" id="splitBtn" data-act="toggle-split" aria-pressed="false">👥 分帳</button>
         <button class="link" type="button" id="noteToggle" style="margin:0">＋ 備註</button>
         <label class="check hidden" id="saveQuickWrap"><input id="saveQuick" type="checkbox">存為常用</label>
+      </div>
+      <div class="group hidden" id="splitPanel" style="display:grid;gap:10px">
+        <div class="seg" id="splitSeg"><button type="button" data-split="lent" aria-pressed="true">我先付，朋友欠我</button><button type="button" data-split="borrowed" aria-pressed="false">朋友先付，我欠朋友</button></div>
+        <div id="lentBox" style="display:grid;gap:8px">
+          <p class="hint" style="margin:0">上方金額＝你付出去的<b>總額</b>，下面填每位朋友要分攤多少。</p>
+          <div id="peopleRows" class="people"></div>
+          <div class="meta-row"><button class="link" type="button" data-act="add-person" style="margin:0">＋ 加一人</button><button class="link" type="button" data-act="even-split" style="margin:0 0 0 auto">平均分</button></div>
+          <div class="note" id="mineNote"></div>
+        </div>
+        <div id="borrowBox" class="hidden" style="display:grid;gap:8px">
+          <div class="field"><label for="payerName">誰先幫你付？</label><input id="payerName" list="peopleList" maxlength="20" placeholder="例如：小美" autocomplete="off"></div>
+          <p class="hint" style="margin:0">上方金額＝<b>你自己</b>的部分。消費記在今天；等你還錢那天才計入「已付款」。</p>
+        </div>
       </div>
       <textarea id="tNote" class="input hidden" placeholder="備註" aria-label="備註" style="min-height:58px"></textarea>
       <div class="keypad" id="keypad">
@@ -415,6 +481,35 @@
       </div>
     </div>
   </dialog>
+
+  <!-- 訂閱表單 -->
+  <dialog id="subDialog">
+    <form id="subForm">
+      <div class="sheet-head"><button class="link" type="button" data-close>取消</button><h2 id="subTitle">新增訂閱</h2><button class="link r" type="submit">儲存</button></div>
+      <div class="sheet-body">
+        <div class="group" style="display:grid;gap:12px">
+          <div class="field"><label for="sName">名稱</label><input id="sName" required maxlength="30" placeholder="例如：Netflix、健身房月費"></div>
+          <div class="two"><div class="field"><label for="sAmount">每期金額（總額）</label><input id="sAmount" type="number" inputmode="numeric" min="1" step="1" required></div>
+          <div class="field"><label>週期</label><div class="seg" id="sCycleSeg"><button type="button" data-cycle="month" aria-pressed="true">每月</button><button type="button" data-cycle="year" aria-pressed="false">每年</button></div></div></div>
+          <div class="two"><div class="field"><label for="sNext">下次扣款日</label><input id="sNext" type="date" required></div>
+          <div class="field"><label for="sCategory">分類</label><select id="sCategory"></select></div></div>
+          <div class="field"><label for="sPayment">付款方式</label><select id="sPayment"><option>現金</option><option selected>信用卡</option><option>行動支付</option></select></div>
+          <span class="hint" id="sCycleHint"></span>
+        </div>
+        <div class="group" style="display:grid;gap:8px">
+          <label class="check" style="margin:0"><input type="checkbox" id="sSplitOn">和別人分攤（我先付，朋友再還我）</label>
+          <div id="sSplitBox" class="hidden" style="display:grid;gap:8px">
+            <div id="sPeopleRows" class="people"></div>
+            <div class="meta-row"><button class="link" type="button" data-act="add-sperson" style="margin:0">＋ 加一人</button><button class="link" type="button" data-act="even-ssplit" style="margin:0 0 0 auto">平均分</button></div>
+            <div class="note" id="sMineNote"></div>
+          </div>
+        </div>
+        <div id="subHistory"></div>
+        <button class="btn block hidden" type="button" id="deleteSub" style="color:var(--terra)">刪除這個訂閱</button>
+      </div>
+    </form>
+  </dialog>
+  <datalist id="peopleList"></datalist>
 
   <!-- 預付款表單 -->
   <dialog id="prepaidDialog">
@@ -512,13 +607,14 @@
     const mLabel=mk=>Number(mk.slice(5))+'月';
     const mLong=mk=>`${mk.slice(0,4)} 年 ${Number(mk.slice(5))} 月`;
     const shortDate=s=>s?`${Number(s.slice(5,7))}/${Number(s.slice(8))}`:'';
+    const dateYr=s=>s&&s.slice(0,4)!==today().slice(0,4)?`${s.slice(0,4)}/${shortDate(s)}`:shortDate(s);
     const dayLabel=s=>{const w=`${shortDate(s)} 星期${WEEK[new Date(s+'T00:00:00').getDay()]}`;const t=today();if(s===t) return '今天 · '+w;if(s===addDays(t,-1)) return '昨天 · '+w;return w};
     const guessCat=name=>{for(const [re,c] of GUESS) if(re.test(name)) return c; return ''};
     const ic=(cat)=>`<span class="ic c-${esc(cat)}">${ICON[cat]||'📦'}</span>`;
 
     /* ===== 資料 ===== */
     function defaultQuicks(){return [['咖啡',65,'餐飲'],['洗頭',350,'美容保養'],['捷運',40,'交通'],['超商',95,'日常採買'],['電影',320,'娛樂'],['計程車',180,'交通']].map(([name,amount,category])=>({id:uid(),name,amount,category,payment:null,prepaidId:null,uses:0}))}
-    function blank(){return {version:2,onboarded:false,startDate:today(),budget:0,budgets:{},noSpendDays:[],lastPayment:'信用卡',quicks:defaultQuicks(),prepaids:[],transactions:[]}}
+    function blank(){return {version:2,onboarded:false,startDate:today(),budget:0,budgets:{},noSpendDays:[],lastPayment:'信用卡',quicks:defaultQuicks(),prepaids:[],transactions:[],subs:[],subPays:[]}}
     function demo(){
       const t=today(),d=n=>addDays(t,n),s=blank();
       Object.assign(s,{onboarded:true,startDate:d(-90),budget:18000,budgets:{餐飲:5000,交通:2000,美容保養:3000},noSpendDays:[d(-2),d(-4),d(-5)]});
@@ -535,6 +631,18 @@
       ];
       const q=s.quicks.find(x=>x.name==='洗頭');q.prepaidId=hair.id;q.uses=3;
       s.quicks.push({id:uid(),name:'瑜伽課',amount:0,category:'娛樂',payment:null,prepaidId:yoga.id,uses:4});
+      /* 分帳：我先付的火鍋（小明還沒還、阿華已還），朋友先付的 KTV（我還沒還） */
+      const hot=tx(-2,'火鍋聚餐',400,'餐飲','信用卡');hot.split={type:'lent',total:1200,others:[{id:uid(),name:'小明',amount:400,settled:''},{id:uid(),name:'阿華',amount:400,settled:d(-1)}]};
+      const ktv=tx(-4,'KTV 歡唱',350,'娛樂','朋友先付');ktv.split={type:'borrowed',payer:'小美',settled:''};
+      s.transactions.push(hot,ktv);
+      /* 訂閱：Netflix 家庭方案月繳、和兩位朋友分攤（今天到期待確認）；Spotify 年繳攤提 */
+      const nf={id:uid(),name:'Netflix 家庭方案',amount:390,cycle:'month',anchorDay:Number(t.slice(8)),nextDate:t,payment:'信用卡',category:'娛樂',split:[{name:'小明',amount:130},{name:'阿華',amount:130}]};
+      const prevNf=nextCycle(t,'month',nf.anchorDay,-1);
+      const nfTx={id:uid(),name:nf.name,amount:130,date:prevNf,category:'娛樂',payment:'信用卡',prepaidId:null,note:'',kind:'expense',subId:nf.id,split:{type:'lent',total:390,others:[{id:uid(),name:'小明',amount:130,settled:d(-20)},{id:uid(),name:'阿華',amount:130,settled:''}]}};
+      const spDate=nextCycle(t,'month',Number(d(-12).slice(8)),-2);
+      const sp={id:uid(),name:'Spotify 年繳',amount:1490,cycle:'year',anchorDay:Number(spDate.slice(8)),nextDate:nextCycle(spDate,'year',Number(spDate.slice(8))),payment:'信用卡',category:'娛樂',split:[]};
+      s.subs=[nf,sp];s.transactions.push(nfTx);
+      s.subPays=[{id:uid(),subId:sp.id,name:sp.name,date:spDate,total:1490,months:12,category:'娛樂',payment:'信用卡',others:[]}];
       return s;
     }
     /* 舊版（v1）資料轉換：保留交易，推算預付款「記帳前已使用」的部分，避免餘額跳動 */
@@ -556,7 +664,7 @@
       if(!o||typeof o!=='object') throw new Error('格式不正確');
       if(o.version!==2) return migrate(o);
       const s=Object.assign(blank(),o);
-      ['transactions','prepaids','quicks','noSpendDays'].forEach(k=>{if(!Array.isArray(s[k])) s[k]=[]});
+      ['transactions','prepaids','quicks','noSpendDays','subs','subPays'].forEach(k=>{if(!Array.isArray(s[k])) s[k]=[]});
       if(!s.budgets||typeof s.budgets!=='object') s.budgets={};
       return s;
     }
@@ -585,16 +693,64 @@
     }
     /* 次數型：每次認列「購買金額 ÷ 次數」，最後一次用剩餘價值補尾數 */
     function unitPrice(p,st){if(st.remUnits<=1) return st.remValue;return Math.min(Math.round(p.price/p.units),st.remValue)}
+    /* ===== 訂閱與分帳的計算 ===== */
+    /* 下一期扣款日：依「每月幾號」計算，遇到小月自動調整（例如 31 號 → 2 月 28 號） */
+    function nextCycle(date,cycle,anchor,dir=1){const [y,m]=date.split('-').map(Number);const n=(cycle==='year'?12:1)*dir;const d=new Date(y,m-1+n,1);const mk=`${d.getFullYear()}-${pad(d.getMonth()+1)}`;return `${mk}-${pad(Math.min(anchor,daysIn(mk)))}`}
+    const sumAmt=list=>(list||[]).reduce((a,p)=>a+(Number(p.amount)||0),0);
+    const subMine=s=>Math.max(0,s.amount-sumAmt(s.split));
+    const payMine=p=>Math.max(0,p.total-sumAmt(p.others));
+    /* 年繳攤提：自己的部分平均分到 12 個月，最後一個月補尾數；只計入「已經到了」的月份日期 */
+    function amortItems(){
+      const out=[];
+      state.subPays.forEach(p=>{
+        const mine=payMine(p),n=p.months||12,per=Math.round(mine/n),anchor=Number(p.date.slice(8));
+        for(let k=0;k<n;k++){const date=k?nextCycle(p.date,'month',anchor,k):p.date;out.push({type:'amort',date,amount:k<n-1?per:mine-per*(n-1),category:p.category,name:p.name,payId:p.id,k,n})}
+      });
+      return out;
+    }
+    /* 現金流事件：錢真正付出去（＋）或收回來（－）的日子 */
+    function cashEvents(){
+      const ev=[];
+      state.transactions.forEach(t=>{
+        if(t.prepaidId) return;
+        const sp=t.split;
+        if(sp&&sp.type==='lent'){ev.push({date:t.date,amount:sp.total});sp.others.forEach(o=>{if(o.settled) ev.push({date:o.settled,amount:-o.amount})})}
+        else if(sp&&sp.type==='borrowed'){if(sp.settled) ev.push({date:sp.settled,amount:t.amount})}
+        else ev.push({date:t.date,amount:t.amount});
+      });
+      state.subPays.forEach(p=>{ev.push({date:p.date,amount:p.total});(p.others||[]).forEach(o=>{if(o.settled) ev.push({date:o.settled,amount:-o.amount})})});
+      state.prepaids.forEach(p=>{if(p.purchaseDate) ev.push({date:p.purchaseDate,amount:p.price,buy:1});if(p.refund) ev.push({date:p.refund.date,amount:-p.refund.amount,refund:1})});
+      return ev;
+    }
     function monthStats(mk){
       const tx=state.transactions.filter(t=>mkey(t.date)===mk);
-      const spend=tx.reduce((a,t)=>a+t.amount,0);
-      const direct=tx.filter(t=>!t.prepaidId).reduce((a,t)=>a+t.amount,0);
-      const viaPrepaid=spend-direct;
-      const buys=state.prepaids.filter(p=>p.purchaseDate&&mkey(p.purchaseDate)===mk).reduce((a,p)=>a+p.price,0);
-      const refunds=state.prepaids.filter(p=>p.refund&&mkey(p.refund.date)===mk).reduce((a,p)=>a+p.refund.amount,0);
-      const byCat={};tx.forEach(t=>byCat[t.category]=(byCat[t.category]||0)+t.amount);
-      return {tx,spend,direct,viaPrepaid,cash:direct+buys-refunds,buys,refunds,byCat};
+      const t0=today(),amort=amortItems().filter(a=>mkey(a.date)===mk&&a.date<=t0);
+      const items=[...tx.map(t=>({date:t.date,amount:t.amount,category:t.category})),...amort];
+      const spend=items.reduce((a,t)=>a+t.amount,0);
+      const viaPrepaid=tx.filter(t=>t.prepaidId).reduce((a,t)=>a+t.amount,0);
+      const ev=cashEvents().filter(e=>mkey(e.date)===mk);
+      const buys=ev.filter(e=>e.buy).reduce((a,e)=>a+e.amount,0),refunds=-ev.filter(e=>e.refund).reduce((a,e)=>a+e.amount,0);
+      const yearly=state.subPays.filter(p=>mkey(p.date)===mk).reduce((a,p)=>a+p.total,0);
+      const byCat={};items.forEach(t=>byCat[t.category]=(byCat[t.category]||0)+t.amount);
+      return {tx,items,amort,spend,viaPrepaid,cash:ev.reduce((a,e)=>a+e.amount,0),buys,refunds,yearly,amortSum:amort.reduce((a,x)=>a+x.amount,0),byCat};
     }
+    /* 分帳：誰欠我（in）、我欠誰（out） */
+    function debts(){
+      const out=[];
+      state.transactions.forEach(t=>{const sp=t.split;if(!sp) return;
+        if(sp.type==='lent') sp.others.forEach(o=>out.push({dir:'in',name:o.name,amount:o.amount,settled:o.settled,title:t.name,date:t.date,ref:`tx:${t.id}:${o.id}`}));
+        else out.push({dir:'out',name:sp.payer,amount:t.amount,settled:sp.settled,title:t.name,date:t.date,ref:`tx:${t.id}`});
+      });
+      state.subPays.forEach(p=>(p.others||[]).forEach(o=>out.push({dir:'in',name:o.name,amount:o.amount,settled:o.settled,title:p.name+'（年費）',date:p.date,ref:`pay:${p.id}:${o.id}`})));
+      return out;
+    }
+    function setSettled(ref,date){
+      const [kind,id,oid]=ref.split(':');
+      if(kind==='tx'){const t=state.transactions.find(x=>x.id===id);if(!t||!t.split) return;if(oid){const o=t.split.others.find(x=>x.id===oid);if(o) o.settled=date}else t.split.settled=date}
+      else{const p=state.subPays.find(x=>x.id===id);const o=p&&(p.others||[]).find(x=>x.id===oid);if(o) o.settled=date}
+    }
+    const peopleNames=()=>[...new Set([...debts().map(d=>d.name),...state.subs.flatMap(s=>(s.split||[]).map(p=>p.name))].filter(Boolean))];
+    const dueSubs=()=>{const t=today();return state.subs.filter(s=>s.nextDate&&s.nextDate<=t).sort((a,b)=>a.nextDate.localeCompare(b.nextDate))};
     function doneSet(){const t=today(),s=new Set(state.noSpendDays.filter(d=>d<=t));state.transactions.forEach(x=>{if(x.kind!=='loss'&&x.date<=t) s.add(x.date)});return s}
     function streak(){const s=doneSet();let d=today();if(!s.has(d)) d=addDays(d,-1);let n=0;while(s.has(d)){n++;d=addDays(d,-1)}return n}
     /* 圓環分段：各段之間留白縫，模仿描邊漫畫風 */
@@ -608,11 +764,12 @@
     /* ===== 分頁 ===== */
     let tab='home',viewMonth=curMonth(),quickEdit=false,pickedDay=null,masked=false;
     try{masked=localStorage.getItem('money-flow-mask')==='1'}catch(e){}
-    const TITLES={home:'明細',prepaid:'預付款',stats:'統計',settings:'設定'};
+    const TITLES={home:'明細',prepaid:'預付款',subs:'訂閱',split:'分帳',stats:'統計',settings:'設定'};
     function setTab(t){
       tab=t;$$('.tabbar button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
       Object.keys(TITLES).forEach(k=>$('#page-'+k).classList.toggle('hidden',k!==t));
       $('#pageTitleText').textContent=TITLES[t];$('#monthNav').classList.toggle('hidden',!(t==='home'||t==='stats'));
+      $('#gearBtn').setAttribute('aria-pressed',String(t==='settings'));
       $('#fab').classList.toggle('hidden',t==='settings');
       window.scrollTo(0,0);render();
     }
@@ -621,22 +778,36 @@
     function render(){
       document.body.classList.toggle('masked',masked);
       $('#monthLabel').textContent=mLong(viewMonth);$('[data-act="month-next"]').disabled=viewMonth>=curMonth();
-      if(tab==='home') renderHome();else if(tab==='prepaid') renderPrepaid();else if(tab==='stats') renderStats();else renderSettings();
+      $('#peopleList').innerHTML=peopleNames().map(n=>`<option value="${esc(n)}">`).join('');
+      ({home:renderHome,prepaid:renderPrepaid,subs:renderSubs,split:renderSplit,stats:renderStats,settings:renderSettings})[tab]();
     }
     function renderHome(){
       $('#welcome').classList.toggle('hidden',!!state.onboarded);
       const isCur=viewMonth===curMonth();
       $('#checkinCard').classList.toggle('hidden',!isCur);$('#quickCard').classList.toggle('hidden',!isCur);
       if(isCur){renderCheckin();renderQuick()}
+      renderDue(isCur);
       const m=monthStats(viewMonth);
       $('#expenseTotal').textContent=money(m.spend);$('#cashflowTotal').textContent=money(m.cash);
-      $('#expenseSub').textContent=m.viaPrepaid?`含預付款扣抵 ${money(m.viaPrepaid)}`:`${m.tx.length} 筆`;
-      $('#cashSub').textContent=m.buys?`含購買預付款 ${money(m.buys)}`:'實際付出去的錢';
+      const subs=[];if(m.viaPrepaid) subs.push(`預付款扣抵 ${money(m.viaPrepaid)}`);if(m.amortSum) subs.push(`年繳攤提 ${money(m.amortSum)}`);
+      $('#expenseSub').textContent=subs.length?'含'+subs.join('、'):`${m.tx.length} 筆`;
+      const debtIn=debts().filter(d=>d.dir==='in'&&!d.settled).reduce((a,d)=>a+d.amount,0);
+      $('#cashSub').textContent=debtIn?`朋友還欠你 ${money(debtIn)}`:m.buys?`含購買預付款 ${money(m.buys)}`:'實際付出去的錢';
       renderHeroExtra(m);
-      const parts=[];if(m.buys) parts.push(`本月購買預付款 ${money(m.buys)}，只算付款，不算消費與預算`);if(m.refunds) parts.push(`收到預付款退款 ${money(m.refunds)}`);
+      const parts=[];
+      if(m.buys) parts.push(`本月購買預付款 ${money(m.buys)}`);
+      if(m.yearly) parts.push(`本月付了年繳訂閱 ${money(m.yearly)}`);
+      if(parts.length) parts[parts.length-1]+='，一次付清，消費會分次計入';
+      if(m.refunds) parts.push(`收到預付款退款 ${money(m.refunds)}`);
       $('#prepaidNote').textContent=parts.length?'💡 '+parts.join('；')+'。':'';$('#prepaidNote').classList.toggle('hidden',!parts.length);
       $('#eyeBtn').textContent=masked?'🙈':'👁';$('#eyeBtn').setAttribute('aria-label',masked?'顯示金額':'隱藏金額');
       renderDays();
+    }
+    /* 首頁：到期的訂閱，等使用者確認才入帳 */
+    function renderDue(isCur){
+      const list=isCur?dueSubs():[],el=$('#dueSubs');el.classList.toggle('hidden',!list.length);
+      el.innerHTML=list.map(s=>{const mine=subMine(s),late=daysBetween(s.nextDate,today());
+        return `<article class="card due">${ic(s.category)}<div><strong>${esc(s.name)} <span class="num">${money(s.amount)}</span></strong><small>${late?`${shortDate(s.nextDate)} 該扣款（已過 ${late} 天）`:'今天扣款'}${s.cycle==='year'?' · 年繳，消費分 12 個月':''}${s.split&&s.split.length?` · 我的部分 ${money(mine)}`:''}</small></div><div class="acts"><button class="btn sm" data-act="skip-sub" data-id="${s.id}">跳過</button><button class="btn sm primary" data-act="record-sub" data-id="${s.id}">記下</button></div></article>`}).join('');
     }
     /* 手帳頁：日期、預付款餘額、預算尺 */
     function renderHeroExtra(m){
@@ -676,14 +847,24 @@
         +`<button class="tag add" data-act="new-quick">＋ 新增標籤</button>`;
     }
     function activity(){
-      const a=state.transactions.map(t=>({type:t.kind==='loss'?'loss':'tx',date:t.date,t}));
+      const t0=today(),a=state.transactions.map(t=>({type:t.kind==='loss'?'loss':'tx',date:t.date,t}));
       state.prepaids.forEach(p=>{if(p.purchaseDate) a.push({type:'buy',date:p.purchaseDate,p});if(p.refund) a.push({type:'refund',date:p.refund.date,p})});
+      state.subPays.forEach(p=>a.push({type:'subpay',date:p.date,p}));
+      amortItems().forEach(x=>{if(x.date<=t0) a.push({type:'amort',date:x.date,x})});
+      debts().forEach(d=>{if(d.settled) a.push({type:d.dir==='in'?'repay-in':'repay-out',date:d.settled,d})});
       return a.sort((x,y)=>y.date.localeCompare(x.date));
     }
+    const splitTag=t=>{const sp=t.split;if(!sp) return '';if(sp.type==='lent'){const open=sp.others.filter(o=>!o.settled).length;return `<span class="pay-badge">分帳</span>墊付 ${money(sp.total)}${open?` · ${open} 人未還`:' · 已收齊'}`}return `<span class="pay-badge">分帳</span>${esc(sp.payer)}先付${sp.settled?' · 已還':' · 未還'}`};
     function rowHtml(e,inDetail){
+      const dt=x=>inDetail?shortDate(x)+' · ':'';
       if(e.type==='tx'){const t=e.t,p=t.prepaidId&&ppById(t.prepaidId);
-        return `<button class="row" data-act="edit-tx" data-id="${t.id}">${ic(t.category)}<div><strong>${esc(t.name)}</strong><small>${inDetail?shortDate(t.date)+' · ':''}${p?`<span class="pay-badge">預付</span>${esc(p.name)}`:esc(t.payment)}${t.note?' · '+esc(t.note):''}</small></div><div class="amt num mask">-${money(t.amount)}</div></button>`}
-      if(e.type==='loss'){const t=e.t;return `<button class="row" data-act="${inDetail?'noop':'pp-detail'}" data-id="${t.prepaidId}"><span class="ic c-loss">⌛</span><div><strong>${esc(t.name)}</strong><small>${inDetail?shortDate(t.date)+' · ':''}預付款結清認列</small></div><div class="amt num mask">-${money(t.amount)}</div></button>`}
+        const meta=t.split?splitTag(t):p?`<span class="pay-badge">預付</span>${esc(p.name)}`:esc(t.payment);
+        return `<button class="row" data-act="edit-tx" data-id="${t.id}">${ic(t.category)}<div><strong>${esc(t.name)}${t.subId?'<span class="sub-badge">訂閱</span>':''}</strong><small>${dt(t.date)}${meta}${t.note?' · '+esc(t.note):''}</small></div><div class="amt num mask">-${money(t.amount)}</div></button>`}
+      if(e.type==='loss'){const t=e.t;return `<button class="row" data-act="${inDetail?'noop':'pp-detail'}" data-id="${t.prepaidId}"><span class="ic c-loss">⌛</span><div><strong>${esc(t.name)}</strong><small>${dt(t.date)}預付款結清認列</small></div><div class="amt num mask">-${money(t.amount)}</div></button>`}
+      if(e.type==='subpay'){const p=e.p,mine=payMine(p);return `<button class="row" data-act="subpay-detail" data-id="${p.id}"><span class="ic c-buy">🔁</span><div><strong>年繳：${esc(p.name)}</strong><small>${dt(p.date)}${esc(p.payment)} · 只算付款，消費每月攤 ${money(Math.round(mine/(p.months||12)))}</small></div><div class="amt cash num mask">付 ${money(p.total)}</div></button>`}
+      if(e.type==='amort'){const x=e.x;return `<button class="row" data-act="subpay-detail" data-id="${x.payId}">${ic(x.category)}<div><strong>${esc(x.name)}<span class="sub-badge">攤提 ${x.k+1}/${x.n}</span></strong><small>${dt(x.date)}年繳費用分攤到本月</small></div><div class="amt num mask">-${money(x.amount)}</div></button>`}
+      if(e.type==='repay-in'){const d=e.d;return `<button class="row" data-act="go-split"><span class="ic c-refund">🤝</span><div><strong>${esc(d.name)} 還款</strong><small>${dt(d.settled)}${esc(d.title)} · 已付款金額減少</small></div><div class="amt plus num mask">+${money(d.amount)}</div></button>`}
+      if(e.type==='repay-out'){const d=e.d;return `<button class="row" data-act="go-split"><span class="ic c-buy">🤝</span><div><strong>還錢給 ${esc(d.name)}</strong><small>${dt(d.settled)}${esc(d.title)} · 計入已付款</small></div><div class="amt cash num mask">付 ${money(d.amount)}</div></button>`}
       const p=e.p;
       if(e.type==='buy') return `<button class="row" data-act="pp-detail" data-id="${p.id}"><span class="ic c-buy">💳</span><div><strong>購買：${esc(p.name)}</strong><small>${esc(p.payment)} · 只算付款，不算消費</small></div><div class="amt cash num mask">付 ${money(p.price)}</div></button>`;
       return `<button class="row" data-act="pp-detail" data-id="${p.id}"><span class="ic c-refund">↩</span><div><strong>退款：${esc(p.name)}</strong><small>已付款金額減少</small></div><div class="amt plus num mask">+${money(p.refund.amount)}</div></button>`;
@@ -691,9 +872,32 @@
     function renderDays(){
       const rows=activity().filter(e=>mkey(e.date)===viewMonth),groups=[];
       rows.forEach(e=>{let g=groups[groups.length-1];if(!g||g.date!==e.date){g={date:e.date,items:[]};groups.push(g)}g.items.push(e)});
-      $('#dayList').innerHTML=groups.length?groups.map(g=>{const sp=g.items.filter(e=>e.t).reduce((a,e)=>a+e.t.amount,0);
+      $('#dayList').innerHTML=groups.length?groups.map(g=>{const sp=g.items.reduce((a,e)=>a+(e.t?e.t.amount:e.type==='amort'?e.x.amount:0),0);
         return `<div class="day"><div class="day-head"><b>${dayLabel(g.date)}</b><span class="num mask">${sp?'-'+money(sp):''}</span></div>${g.items.map(e=>rowHtml(e)).join('')}</div>`}).join('')
-        :`<div class="card empty">${mLong(viewMonth)}還沒有紀錄${viewMonth===curMonth()?'，按右下角的 ＋ 開始':''}。</div>`;
+        :`<div class="card empty">${mLong(viewMonth)}還沒有紀錄${viewMonth===curMonth()?'，按右下角的 ✎ 開始':''}。</div>`;
+    }
+    /* ===== 訂閱頁 ===== */
+    function renderSubs(){
+      const list=state.subs.slice().sort((a,b)=>(a.nextDate||'').localeCompare(b.nextDate||''));
+      $('#subMonthly').textContent=money(list.reduce((a,s)=>a+(s.cycle==='year'?subMine(s)/12:subMine(s)),0));$('#subCount').textContent=list.length;
+      $('#subList').innerHTML=list.length?list.map(s=>{const mine=subMine(s),due=s.nextDate<=today(),shared=s.split&&s.split.length;
+        return `<article class="card"><button class="pp-top" data-act="edit-sub" data-id="${s.id}">${ic(s.category)}<div><strong>${esc(s.name)}</strong><small>${s.cycle==='year'?'每年':'每月'} ${money(s.amount)}${shared?` · 和 ${s.split.map(p=>esc(p.name)).join('、')} 分攤`:''} · ${esc(s.payment)}</small></div>
+          <div class="pp-rem"><b class="num">${money(s.cycle==='year'?Math.round(mine/12):mine)}</b><small>${s.cycle==='year'?'每月攤提':'我的部分'}</small></div></button>
+          <div class="pp-foot"><span class="${due?'warn':'muted'}">${due?`⏰ ${shortDate(s.nextDate)} 該扣款，到首頁確認`:`下次扣款 ${dateYr(s.nextDate)}（${daysBetween(today(),s.nextDate)} 天後）`}</span></div></article>`}).join('')
+        :'<div class="card empty">還沒有訂閱。Netflix、Spotify、健身房月費、手機月租都可以加進來。</div>';
+    }
+    /* ===== 分帳頁 ===== */
+    function renderSplit(){
+      const all=debts(),open=all.filter(d=>!d.settled),done=all.filter(d=>d.settled);
+      $('#oweMe').textContent=money(open.filter(d=>d.dir==='in').reduce((a,d)=>a+d.amount,0));
+      $('#iOwe').textContent=money(open.filter(d=>d.dir==='out').reduce((a,d)=>a+d.amount,0));
+      const byName={};open.forEach(d=>(byName[d.name]=byName[d.name]||[]).push(d));
+      const names=Object.keys(byName).sort((a,b)=>byName[b].length-byName[a].length);
+      $('#splitList').innerHTML=names.length?names.map(n=>{const ds=byName[n].sort((a,b)=>b.date.localeCompare(a.date)),net=ds.reduce((a,d)=>a+(d.dir==='in'?d.amount:-d.amount),0);
+        return `<article class="card debt-card"><div class="card-head"><h2>${esc(n)}<b class="num ${net>=0?'owe-in':'owe-out'}">${net>=0?'欠你 '+money(net):'你欠 '+money(-net)}</b></h2>${ds.length>1?`<button class="link" data-act="settle-all" data-name="${esc(n)}">全部結清</button>`:''}</div>
+          ${ds.map(d=>`<div class="debt-row"><div><strong>${esc(d.title)}</strong><small>${shortDate(d.date)} · ${d.dir==='in'?'你先付，他要還你':'他先付，你要還他'}</small></div><span class="amt num ${d.dir==='in'?'owe-in':'owe-out'}">${money(d.amount)}</span><button class="btn sm ${d.dir==='in'?'':'accent'}" data-act="settle" data-ref="${d.ref}">${d.dir==='in'?'已收回':'已還款'}</button></div>`).join('')}</article>`}).join('')
+        :'<div class="card empty">目前沒有未結清的分帳 🎉<br>記帳時按「👥 分帳」，就能記下誰欠你、你欠誰。</div>';
+      $('#splitDone').innerHTML=done.length?`<details class="closed"><summary>▸ 已結清（${done.length}）</summary><div class="card" style="padding:4px 16px">${done.sort((a,b)=>b.settled.localeCompare(a.settled)).map(d=>`<div class="debt-row"><div><strong>${esc(d.name)} · ${esc(d.title)}</strong><small>${shortDate(d.settled)} ${d.dir==='in'?'已收回':'已還款'}</small></div><span class="amt num">${money(d.amount)}</span><button class="link" data-act="unsettle" data-ref="${d.ref}" style="margin:0">復原</button></div>`).join('')}</div></details>`:'';
     }
     function ppWarn(p,st){
       if(!st.active) return '';const t=today(),remTxt=p.type==='sessions'?`還剩 ${st.remUnits} 次（約 ${money(st.remValue)}）`:`還剩 ${money(st.remValue)}`;
@@ -715,7 +919,7 @@
     }
     function renderStats(){
       const mk=viewMonth,m=monthStats(mk),n=daysIn(mk),isCur=mk===curMonth(),lastDay=isCur?Number(today().slice(8)):n;
-      const vals=Array.from({length:n},(_,i)=>m.tx.filter(t=>Number(t.date.slice(8))===i+1).reduce((a,t)=>a+t.amount,0));
+      const vals=Array.from({length:n},(_,i)=>m.items.filter(t=>Number(t.date.slice(8))===i+1).reduce((a,t)=>a+t.amount,0));
       const max=Math.max(...vals,1),avg=m.spend/lastDay,plot=126;
       if(pickedDay&&mkey(pickedDay)!==mk) pickedDay=null;
       let html=vals.map((v,i)=>{const d=`${mk}-${pad(i+1)}`;return `<button data-act="pick-day" data-day="${d}" aria-pressed="${pickedDay===d}" aria-label="${shortDate(d)} ${money(v)}"><i class="${v?'':'zero'}" style="height:${v/max*100}%"></i></button>`}).join('');
@@ -725,7 +929,7 @@
       const groups=Object.entries(m.byCat).sort((a,b)=>b[1]-a[1]);let top=groups.slice(0,4);const rest=groups.slice(4).reduce((a,[,v])=>a+v,0);if(rest) top.push(['其他分類',rest]);
       $('#donut').style.background=m.spend?ringGradient(top.map(([,v],i)=>({v,c:DONUT[i]}))):'#fff';
       $('#donutCenter').innerHTML=m.spend?`<span class="muted">消費</span><br><span class="num" style="font-size:15px;font-weight:900">${money(m.spend)}</span>`:'尚無<br>資料';
-      $('#donutTotal').textContent=m.tx.length?`${m.tx.length} 筆`:'';
+      $('#donutTotal').textContent=m.items.length?`${m.items.length} 筆`:'';
       $('#legend').innerHTML=top.length?top.map(([c,v],i)=>`<div><span><i style="background:${DONUT[i]}"></i>${esc(c)}</span><b class="num">${Math.round(v/m.spend*100)}%</b></div>`).join(''):'<span class="muted">這個月還沒有消費。</span>';
       $('#rank').innerHTML=groups.length?groups.map(([c,v])=>{const b=state.budgets[c],over=b&&v>b,w=b?Math.min(100,v/b*100):v/groups[0][1]*100;
         return `<div class="rank-row">${ic(c)}<div><header><span>${esc(c)}</span><small class="num">${money(v)}${b?` / ${money(b)}`:''}${over?' · 超支':''}</small></header><div class="bar"><i class="${over?'over':''}" style="width:${w}%"></i></div></div></div>`}).join(''):'<div class="empty">新增消費後顯示排行。</div>';
@@ -756,14 +960,34 @@
 
     /* ===== 記帳面板 ===== */
     let ctx={};
-    function setAmt(s){ctx.amt=String(s||'').replace(/^0+(?=\d)/,'');$('#amtOut').textContent=ctx.amt?Number(ctx.amt).toLocaleString('zh-TW'):'0';$('#amountBox').classList.toggle('empty',!ctx.amt)}
+    function setAmt(s){ctx.amt=String(s||'').replace(/^0+(?=\d)/,'');$('#amtOut').textContent=ctx.amt?Number(ctx.amt).toLocaleString('zh-TW'):'0';$('#amountBox').classList.toggle('empty',!ctx.amt);if(ctx.split) updateMine()}
     function setCat(c){ctx.cat=c;$$('#catGrid .cat').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.cat===c)));const bi=$('#barIcon');bi.className='ic c-'+(c||'其他');bi.textContent=ICON[c]||'❔'}
     function setPay(p){
       if(p!=='prepaid') ctx.lastNormal=p;ctx.pay=p;const pp=p==='prepaid';
       $$('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.mode==='prepaid')===pp)));
       $$('#payChips .chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pay===p)));
-      $('#payChips').classList.toggle('hidden',pp);$('#prepaidSelectWrap').classList.toggle('hidden',!pp);
+      $('#prepaidSelectWrap').classList.toggle('hidden',!pp);$('#splitBtn').classList.toggle('hidden',pp);
+      if(pp&&ctx.split) ctx.split=null;
+      renderSplitPanel();
     }
+    /* ===== 分帳（記帳面板） ===== */
+    const peopleHtml=list=>list.map((p,i)=>`<div class="person-row"><input data-i="${i}" data-f="name" list="peopleList" maxlength="20" placeholder="朋友名字" value="${esc(p.name)}" aria-label="朋友名字" autocomplete="off"><input data-i="${i}" data-f="amount" type="number" inputmode="numeric" min="0" step="1" placeholder="分攤金額" value="${p.amount||''}" aria-label="分攤金額"><button type="button" data-act="rm-person" data-i="${i}" aria-label="移除這位">×</button></div>`).join('');
+    function renderSplitPanel(){
+      const sp=ctx.split;$('#splitPanel').classList.toggle('hidden',!sp);$('#splitBtn').setAttribute('aria-pressed',String(!!sp));
+      $('#payChips').classList.toggle('hidden',ctx.pay==='prepaid'||sp?.type==='borrowed');
+      if(!sp) return;
+      $$('#splitSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.split===sp.type)));
+      $('#lentBox').classList.toggle('hidden',sp.type!=='lent');$('#borrowBox').classList.toggle('hidden',sp.type!=='borrowed');
+      $('#peopleRows').innerHTML=peopleHtml(sp.people);$('#payerName').value=sp.payer||'';
+      updateMine();
+    }
+    function updateMine(){
+      const sp=ctx.split;if(!sp||sp.type!=='lent') return;
+      const total=Number(ctx.amt)||0,others=sumAmt(sp.people),mine=total-others,n=$('#mineNote');
+      n.className=mine<0?'note warn':'note';
+      n.textContent=!total?'先用數字鍵輸入你付的總額。':mine<0?`朋友分攤加起來 ${money(others)}，超過總額 ${money(total)} 了。`:`你的部分 ${money(mine)}（總額 ${money(total)} − 朋友 ${money(others)}）。消費只算 ${money(mine)}，朋友還錢後再從已付款扣回。`;
+    }
+    function evenSplit(list,total){const n=list.length+1,each=Math.floor(total/n);list.forEach(p=>p.amount=each)}
     function openTx(o={}){
       closeAll();
       const e=o.editId?state.transactions.find(t=>t.id===o.editId):null,q=o.quickId?state.quicks.find(x=>x.id===o.quickId):null;
@@ -782,6 +1006,7 @@
       const ppBtn=$('#modeSeg [data-mode="prepaid"]');ppBtn.disabled=!hasPp||lockedPp;ppBtn.title=hasPp?'':'還沒有可用的預付款';
       $('#modeSeg [data-mode="normal"]').disabled=lockedPp;
       let pay=ppId?'prepaid':(e?.payment??q?.payment??state.lastPayment??'信用卡');if(pay!=='prepaid'&&!PAYS.includes(pay)) pay='信用卡';
+      if(e&&e.split){ctx.split=e.split.type==='lent'?{type:'lent',people:e.split.others.map(o=>({...o}))}:{type:'borrowed',people:[],payer:e.split.payer,settled:e.split.settled};if(e.split.type==='lent') setAmt(e.split.total)}
       setPay(pay);fillPrepaids(ppId);$('#tPrepaid').disabled=lockedPp;
       $('#tNote').value=e?.note||'';$('#tNote').classList.toggle('hidden',!e?.note);$('#noteToggle').classList.toggle('hidden',!!e?.note);
       $('#saveQuick').checked=false;$('#saveQuickWrap').classList.toggle('hidden',!!(e||q));
@@ -818,12 +1043,24 @@
       setAmt(a);
     }
     function saveTx(){
-      const amount=Math.round(Number(ctx.amt)),date=$('#tDate').value,payment=ctx.pay,name=$('#tName').value.trim(),category=ctx.cat;
+      const total=Math.round(Number(ctx.amt)),date=$('#tDate').value,payment=ctx.pay,name=$('#tName').value.trim(),category=ctx.cat,sp=ctx.split;
+      let amount=total,split=null;
       if(!category) return toast('請先選一個分類。');
       if(!(amount>=1)) return toast('請用數字鍵輸入金額。');
       if(!name){$('#tName').focus();return toast('請輸入店家或項目名稱。')}
       if(!date) return toast('請選擇日期。');
       if(date>today()) return toast('不能記錄未來日期的消費。');
+      if(sp&&sp.type==='lent'){
+        const people=sp.people.map(p=>({...p,name:String(p.name||'').trim(),amount:Math.round(Number(p.amount)||0)})).filter(p=>p.name||p.amount);
+        if(!people.length) return toast('請填至少一位朋友和他要分攤的金額。');
+        if(people.some(p=>!p.name)) return toast('請填上每位朋友的名字。');
+        if(people.some(p=>!(p.amount>=1))) return toast('每位朋友的分攤金額至少 $1。');
+        if(sumAmt(people)>total) return toast('朋友分攤的金額加起來超過總額了。');
+        amount=total-sumAmt(people);split={type:'lent',total,others:people.map(p=>({id:p.id||uid(),name:p.name,amount:p.amount,settled:p.settled||''}))};
+      }else if(sp&&sp.type==='borrowed'){
+        const payer=$('#payerName').value.trim();if(!payer) return toast('請填上是誰先幫你付的。');
+        split={type:'borrowed',payer,settled:sp.settled||''};
+      }
       let prepaidId=null;
       if(payment==='prepaid'){
         const p=ppById($('#tPrepaid').value);if(!p) return toast('請先建立可使用的預付款。');
@@ -836,22 +1073,95 @@
         prepaidId=p.id;
       }
       const old=ctx.editId&&state.transactions.find(t=>t.id===ctx.editId);
-      const tx={id:old?old.id:uid(),name,amount,date,category,payment:prepaidId?'prepaid':payment,prepaidId,note:$('#tNote').value.trim(),kind:'expense'};
-      if(old) Object.assign(old,tx);else state.transactions.unshift(tx);
+      const tx={id:old?old.id:uid(),name,amount,date,category,payment:prepaidId?'prepaid':split?.type==='borrowed'?'朋友先付':payment,prepaidId,note:$('#tNote').value.trim(),kind:'expense'};
+      if(split) tx.split=split;
+      if(old){if(!split) delete old.split;Object.assign(old,tx)}else state.transactions.unshift(tx);
       state.noSpendDays=state.noSpendDays.filter(d=>d!==date);
-      if(!prepaidId) state.lastPayment=payment;
+      if(!prepaidId&&split?.type!=='borrowed') state.lastPayment=payment;
       if(ctx.quickId){const q=state.quicks.find(x=>x.id===ctx.quickId);if(q) q.uses=(q.uses||0)+1}
       const savedQuick=$('#saveQuick').checked;
-      if(savedQuick){const ex=state.quicks.find(x=>x.name===name),data={name,amount:prepaidId&&ppById(prepaidId).type==='sessions'?0:amount,category,payment:prepaidId?null:payment,prepaidId};if(ex) Object.assign(ex,data);else state.quicks.unshift({id:uid(),uses:1,...data})}
+      if(savedQuick){const ex=state.quicks.find(x=>x.name===name),data={name,amount:prepaidId&&ppById(prepaidId).type==='sessions'?0:total,category,payment:prepaidId?null:payment,prepaidId};if(ex) Object.assign(ex,data);else state.quicks.unshift({id:uid(),uses:1,...data})}
       save();$('#txDialog').close();
       if(mkey(date)!==viewMonth&&tab==='home') viewMonth=mkey(date);
       render();
-      toast(old?'已更新。':`已記下 ${money(amount)}${date===today()?` · 🔥 連續 ${streak()} 天`:''}${savedQuick?' · 已存為常用':''}`);
+      toast(old?'已更新。':`已記下 ${money(amount)}${split?.type==='lent'?`（${split.others.length} 位朋友待還 ${money(total-amount)}）`:split?`（欠 ${split.payer} ${money(amount)}）`:''}${date===today()?` · 🔥 連續 ${streak()} 天`:''}${savedQuick?' · 已存為常用':''}`);
     }
     function deleteTx(id){
       const i=state.transactions.findIndex(t=>t.id===id);if(i<0) return;const [removed]=state.transactions.splice(i,1);
       save();closeAll();render();
       toast(`已刪除「${removed.name}」`,'復原',()=>{state.transactions.splice(i,0,removed);save();render();toast('已復原。')});
+    }
+
+    /* ===== 訂閱 ===== */
+    let subCtx={};
+    const subById=id=>state.subs.find(s=>s.id===id);
+    function setCycle(c){subCtx.cycle=c;$$('#sCycleSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.cycle===c)));subHint()}
+    function subHint(){
+      const total=Math.round(Number($('#sAmount').value)||0),mine=Math.max(0,total-sumAmt(subCtx.people));
+      $('#sCycleHint').textContent=subCtx.cycle==='year'?`年繳：付款那個月計入「已付款」${total?money(total):''}，消費平均攤到 12 個月${total?`（每月約 ${money(Math.round((subCtx.split?mine:total)/12))}）`:''}。`:'每月扣款日會在首頁提醒，按「記下」才入帳。';
+      const n=$('#sMineNote');if(!subCtx.split) return;
+      const others=sumAmt(subCtx.people);n.className=total-others<0?'note warn':'note';
+      n.textContent=!total?'先填上每期金額。':total-others<0?'朋友分攤加起來超過每期金額了。':`每期我的部分 ${money(total-others)}；每次記下時，朋友的部分會自動列入「分帳」等他們還你。`;
+    }
+    function renderSubPeople(){$('#sSplitBox').classList.toggle('hidden',!subCtx.split);$('#sSplitOn').checked=!!subCtx.split;$('#sPeopleRows').innerHTML=peopleHtml(subCtx.people);subHint()}
+    function openSub(id){
+      closeAll();const s=id&&subById(id);
+      subCtx={editId:s?.id||null,cycle:s?.cycle||'month',people:(s?.split||[]).map(p=>({...p})),split:!!(s&&s.split&&s.split.length)};
+      $('#subForm').reset();$('#subTitle').textContent=s?'編輯訂閱':'新增訂閱';
+      $('#sName').value=s?.name||'';$('#sAmount').value=s?.amount||'';$('#sNext').value=s?.nextDate||today();
+      $('#sCategory').innerHTML=CATS.map(c=>`<option ${c===(s?.category||'娛樂')?'selected':''}>${c}</option>`).join('');
+      $('#sPayment').value=s?.payment||'信用卡';
+      if(!subCtx.people.length) subCtx.people=[{name:'',amount:''}];
+      setCycle(subCtx.cycle);renderSubPeople();
+      const pays=s?state.subPays.filter(p=>p.subId===s.id).sort((a,b)=>b.date.localeCompare(a.date)):[];
+      const txs=s?state.transactions.filter(t=>t.subId===s.id).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6):[];
+      $('#subHistory').innerHTML=pays.length||txs.length?`<p class="section-title" style="margin:2px 4px 6px">最近的扣款紀錄</p><div class="day">${[...pays.map(p=>rowHtml({type:'subpay',p},true)),...txs.map(t=>rowHtml({type:'tx',t},true))].join('')}</div>`:'';
+      $('#deleteSub').classList.toggle('hidden',!s);
+      $('#subDialog').showModal();
+    }
+    function saveSub(ev){
+      ev.preventDefault();if(!$('#subForm').reportValidity()) return;
+      const amount=Math.round(Number($('#sAmount').value)),next=$('#sNext').value;
+      let split=[];
+      if(subCtx.split){
+        split=subCtx.people.map(p=>({name:String(p.name||'').trim(),amount:Math.round(Number(p.amount)||0)})).filter(p=>p.name||p.amount);
+        if(!split.length) return toast('請填至少一位一起分攤的朋友。');
+        if(split.some(p=>!p.name)) return toast('請填上每位朋友的名字。');
+        if(split.some(p=>!(p.amount>=1))) return toast('每位朋友的分攤金額至少 $1。');
+        if(sumAmt(split)>amount) return toast('朋友分攤加起來超過每期金額了。');
+      }
+      const data={name:$('#sName').value.trim(),amount,cycle:subCtx.cycle,nextDate:next,anchorDay:Number(next.slice(8)),payment:$('#sPayment').value,category:$('#sCategory').value,split};
+      const s=subCtx.editId&&subById(subCtx.editId);if(s) Object.assign(s,data);else state.subs.push({id:uid(),...data});
+      save();$('#subDialog').close();render();toast(s?'已更新訂閱。':`已新增訂閱，${shortDate(next)} 扣款時會在首頁提醒。`);
+    }
+    /* 到期確認：月繳記一筆消費；年繳記一筆付款，消費攤到 12 個月 */
+    function recordSub(id){
+      const s=subById(id);if(!s) return;const date=s.nextDate,prevNext=s.nextDate,others=(s.split||[]).map(p=>({id:uid(),name:p.name,amount:p.amount,settled:''}));
+      let undo;
+      if(s.cycle==='year'){
+        const p={id:uid(),subId:s.id,name:s.name,date,total:s.amount,months:12,category:s.category,payment:s.payment,others};
+        state.subPays.push(p);undo=()=>{state.subPays=state.subPays.filter(x=>x.id!==p.id)};
+      }else{
+        const t={id:uid(),name:s.name,amount:subMine(s),date,category:s.category,payment:s.payment,prepaidId:null,note:'',kind:'expense',subId:s.id};
+        if(others.length) t.split={type:'lent',total:s.amount,others};
+        state.transactions.unshift(t);undo=()=>{state.transactions=state.transactions.filter(x=>x.id!==t.id)};
+      }
+      s.nextDate=nextCycle(s.nextDate,s.cycle,s.anchorDay||Number(s.nextDate.slice(8)));
+      save();render();
+      toast(`已記下 ${s.name}${s.cycle==='year'?`，消費每月攤 ${money(Math.round(subMine(s)/12))}`:''}`,'復原',()=>{undo();s.nextDate=prevNext;save();render();toast('已復原。')});
+    }
+    function skipSub(id){
+      const s=subById(id);if(!s) return;const prev=s.nextDate;
+      s.nextDate=nextCycle(s.nextDate,s.cycle,s.anchorDay||Number(s.nextDate.slice(8)));save();render();
+      toast(`已跳過這期，下次 ${shortDate(s.nextDate)}`,'復原',()=>{s.nextDate=prev;save();render()});
+    }
+    function subPayDetail(id){
+      const p=state.subPays.find(x=>x.id===id);if(!p) return;const mine=payMine(p);
+      askConfirm('刪除這筆年繳紀錄？',`${p.name}：${p.date} 付 ${money(p.total)}，每月攤提約 ${money(Math.round(mine/(p.months||12)))}。刪除後付款和 12 個月的攤提會一起移除。`,'刪除',()=>{const i=state.subPays.indexOf(p);state.subPays.splice(i,1);save();render();toast('已刪除年繳紀錄','復原',()=>{state.subPays.splice(i,0,p);save();render()})});
+    }
+    function settle(ref,dateVal){
+      const d=debts().find(x=>x.ref===ref);if(!d) return;setSettled(ref,dateVal);save();render();
+      toast(`${d.name} ${d.dir==='in'?'已還你':'已還清'} ${money(d.amount)}`,'復原',()=>{setSettled(ref,'');save();render()});
     }
 
     /* ===== 預付款 ===== */
@@ -963,6 +1273,22 @@
         case 'go-quick-edit':quickEdit=true;viewMonth=curMonth();setTab('home');return setTimeout(()=>$('#quickCard').scrollIntoView({behavior:'smooth',block:'center'}),50);
         case 'toggle-mask':masked=!masked;try{localStorage.setItem('money-flow-mask',masked?'1':'0')}catch(e){}return render();
         case 'edit-tx':return openTx({editId:id});
+        case 'toggle-split':if(ctx.pay==='prepaid') return;ctx.split=ctx.split?null:{type:'lent',people:[{name:'',amount:''}],payer:''};return renderSplitPanel();
+        case 'add-person':ctx.split.people.push({name:'',amount:''});renderSplitPanel();return $$('#peopleRows input[data-f="name"]').pop()?.focus();
+        case 'even-split':if(!(Number(ctx.amt)>0)) return toast('先用數字鍵輸入總額。');evenSplit(ctx.split.people,Number(ctx.amt));return renderSplitPanel();
+        case 'rm-person':{const inSub=!!el.closest('#sPeopleRows'),list=inSub?subCtx.people:ctx.split.people;list.splice(Number(el.dataset.i),1);if(!list.length) list.push({name:'',amount:''});return inSub?renderSubPeople():renderSplitPanel()}
+        case 'add-sperson':subCtx.people.push({name:'',amount:''});renderSubPeople();return $$('#sPeopleRows input[data-f="name"]').pop()?.focus();
+        case 'even-ssplit':{const t=Number($('#sAmount').value)||0;if(!t) return toast('先填上每期金額。');evenSplit(subCtx.people,t);return renderSubPeople()}
+        case 'new-sub':return openSub();
+        case 'edit-sub':return openSub(id);
+        case 'record-sub':return recordSub(id);
+        case 'skip-sub':return skipSub(id);
+        case 'subpay-detail':return subPayDetail(id);
+        case 'go-split':return setTab('split');
+        case 'settle':return settle(el.dataset.ref,today());
+        case 'unsettle':{setSettled(el.dataset.ref,'');save();render();return toast('已改回未結清。')}
+        case 'settle-all':{const list=debts().filter(d=>!d.settled&&d.name===el.dataset.name);list.forEach(d=>setSettled(d.ref,today()));save();render();return toast(`和 ${el.dataset.name} 的 ${list.length} 筆都結清了`,'復原',()=>{list.forEach(d=>setSettled(d.ref,''));save();render()})}
+        case 'open-settings':return setTab(tab==='settings'?'home':'settings');
         case 'pick-cat':ctx.catTouched=true;setCat(el.dataset.cat);if(ctx.pay==='prepaid'&&!ctx.editId){fillPrepaids($('#tPrepaid').value);paymentChange()}return;
         case 'pick-pay':setPay(el.dataset.pay);return paymentChange();
         case 'pick-day':pickedDay=pickedDay===el.dataset.day?null:el.dataset.day;return renderStats();
@@ -990,6 +1316,15 @@
     $$('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
     $$('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d) d.close()}));
     $('#ppForm').addEventListener('submit',savePp);
+    $('#subForm').addEventListener('submit',saveSub);
+    $('#splitSeg').addEventListener('click',e=>{const b=e.target.closest('[data-split]');if(!b||!ctx.split) return;ctx.split.type=b.dataset.split;renderSplitPanel()});
+    $('#sCycleSeg').addEventListener('click',e=>{const b=e.target.closest('[data-cycle]');if(b) setCycle(b.dataset.cycle)});
+    $('#peopleRows').addEventListener('input',e=>{const i=e.target.dataset.i;if(i==null||!ctx.split) return;ctx.split.people[i][e.target.dataset.f]=e.target.value;updateMine()});
+    $('#sPeopleRows').addEventListener('input',e=>{const i=e.target.dataset.i;if(i==null) return;subCtx.people[i][e.target.dataset.f]=e.target.value;subHint()});
+    $('#sSplitOn').addEventListener('change',e=>{subCtx.split=e.target.checked;renderSubPeople()});
+    $('#sAmount').addEventListener('input',subHint);
+    $('#payerName').addEventListener('input',e=>{if(ctx.split) ctx.split.payer=e.target.value});
+    $('#deleteSub').addEventListener('click',()=>{const s=subById(subCtx.editId);if(!s) return;askConfirm('刪除這個訂閱？',`「${s.name}」之後不會再提醒扣款。已經記下的紀錄會保留。`,'刪除',()=>{state.subs=state.subs.filter(x=>x.id!==s.id);save();closeAll();render();toast('已刪除訂閱。')})});
     $('#qForm').addEventListener('submit',saveQuickItem);
     $('#bForm').addEventListener('submit',saveBudget);
     $('#pTypeSeg').addEventListener('click',e=>{const b=e.target.closest('[data-ptype]');if(b&&!b.disabled) setPType(b.dataset.ptype)});
